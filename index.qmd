@@ -1,5 +1,6 @@
 ---
-title: "R-for-Geospatial"
+title: "R for Geospatial"
+author: Caitlin C. Mothes, PhD
 ---
 
 This is a Quarto website.
