@@ -15,9 +15,19 @@ website:
     contents:
       - text: "Welcome"
         href: index.qmd
+      - text: "Getting Started"
+        href: setup.qmd
+      - text: "Day 1"
+        href: day1.qmd
 
    
-  page-footer: "Copyright 2022, Caitlin Mothes"
+  page-footer: 
+    left:
+      - text: "Copyright 2022, Caitlin Mothes"
+    right: |
+      [![](logo.png){fig-alt="Geospatial Centroid" width=150px}](https://gis.colostate.edu/)
+     
+  
 
 format:
   html:

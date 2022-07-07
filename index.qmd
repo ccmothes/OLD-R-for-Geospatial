@@ -1,12 +1,25 @@
 ---
 title: "R for Geospatial"
-author: Caitlin C. Mothes, PhD
+author: Caitlin C. Mothes, PhD (ccmothes@colostate.edu)
+subtitle: "Geospatial Centroid @ CSU"
 ---
 
-This is a Quarto website.
+## Welcome
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+This is the **R for Geospatial** course website where you will find all necessary material. This course is designed for researchers with a *basic* understanding of R and RStudio and an interest in working with spatial data. In this workshop you will learn how to better handle, analyze, and visualize spatial data in R. You will also be exposed to various open-source spatial databases and learn how to access them directly from R to pull in data. The general breakdown of the workshop is as follows:**\
+Day 1:**
 
-```{r}
-1 + 1
-```
+-   Introduction to spatial data formats (vector and raster)
+-   Importing, cleaning and manipulating spatial data
+
+**Day 2:**
+
+-   Spatial analysis (e.g., buffer, intersect, extract, spatial joins, distance and area calculations)
+-   Basic plotting
+
+**Day 3:**
+
+-   Spatial data visualization (static, dynamic, interactive)
+-   Data sharing (e.g., R Markdown and Quarto, Shiny)
+
+Before Day 1 of the workshop be sure to go to the [Getting Started](setup.qmd) page to complete all pre-workshop steps and set-up your workspace with the necessary software and packages. We will have set-up hours 30 minutes before the start of Day 1 if you need assistance, or you can email ccmothes\@colostate.edu with any set-up issues.
