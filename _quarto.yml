@@ -4,6 +4,7 @@ project:
 website:
   sidebar:
     title: "R for Geospatial"
+    collapse-level: 1
     tools: 
       - icon: twitter
         href: https://twitter.com/Centroid_CSU
@@ -19,6 +20,14 @@ website:
         href: setup.qmd
       - text: "Day 1"
         href: day1.qmd
+      - text: "Day 2"
+        href: day2.qmd
+      - text: "Day 3"
+        href: day3.qmd
+      - section: "Extras"
+        contents:
+            - text: "Pulling Data"
+              href: getdata.qmd
 
    
   page-footer: 

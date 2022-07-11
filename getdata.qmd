@@ -1,0 +1,39 @@
+---
+title: "Pulling Data"
+---
+
+Below is the code used to import all datasets used for this workshop. There are tons of R packages that allow you to connect to open-source spatial databases and pull spatial data right into your R session (without having to download and read in the data separately). Some packages require an API key before importing the data, which are free to sign up for.
+
+## Load in Libraries
+
+This function checks if all packages are installed in your local system, if not it will install them, and then load all of them into your R session. If you don't have any of these packages installed this step may take a little while.
+
+```{r}
+#| warning: false
+#| message: false
+#| 
+packageLoad <-
+  function(x) {
+    for (i in 1:length(x)) {
+      if (!x[i] %in% installed.packages()) {
+        install.packages(x[i])
+      }
+      library(x[i], character.only = TRUE)
+    }
+  }
+
+packageLoad(c("FedData", "rgbif", "tidycensus", "tigris", "nhdplusTools"))
+```
+
+For this workshop we are focusing on the state of Colorado, so we first download some political boundaries to use to filter the raster layers we want returned. The `tigris` package allows you to directly download TIGER/Line shapefiles from the US Census Bureau.
+
+```{r}
+#| message: false
+#| warning: false
+
+# download county shapefile for the state of Colorado
+counties <- tigris::counties(state = "CO")
+
+```
+
+Get elevation and landcover raster layers using the [`FedData`](https://github.com/ropensci/FedData) package. The source of the elevation data is the USGS National Elevation Dataset and the source for landcover is the National Land Cover Database (NLCD).
