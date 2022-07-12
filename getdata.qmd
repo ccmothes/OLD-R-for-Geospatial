@@ -30,6 +30,7 @@ For this workshop we are focusing on the state of Colorado, so we first download
 ```{r}
 #| message: false
 #| warning: false
+#| results: hide
 
 # download county shapefile for the state of Colorado
 counties <- tigris::counties(state = "CO")
@@ -37,3 +38,26 @@ counties <- tigris::counties(state = "CO")
 ```
 
 Get elevation and landcover raster layers using the [`FedData`](https://github.com/ropensci/FedData) package. The source of the elevation data is the USGS National Elevation Dataset and the source for landcover is the National Land Cover Database (NLCD).
+
+```{r}
+#| eval: false
+elevation <- FedData::get_ned(template = counties, label = "co_elevation")
+```
+
+This takes way to long, try elevatr package. Data are saved in environment (temp folder). This package download much faster w/ lower resolutions.
+
+```{r}
+#| eval: false
+# get elevation at ~1000m (864). Much faster, seconds
+elevation2 <- get_elev_raster(counties, z = 7)
+
+terra::writeRaster(elevation2, "data/elevation_1km.tif")
+```
+
+```{r}
+#| eval: false
+# 100m resolution takes longer...still under a minute
+elev_100m <- get_elev_raster(counties, z = 10)
+
+terra::writeRaster(elev_100m, "data/elevation_100m.tif")
+```
