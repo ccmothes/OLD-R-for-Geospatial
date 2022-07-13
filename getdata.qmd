@@ -1,5 +1,8 @@
 ---
 title: "Pulling Data"
+format: 
+  html:
+    eval: false
 ---
 
 Below is the code used to import all datasets used for this workshop. There are tons of R packages that allow you to connect to open-source spatial databases and pull spatial data right into your R session (without having to download and read in the data separately). Some packages require an API key before importing the data, which are free to sign up for.
@@ -22,7 +25,7 @@ packageLoad <-
     }
   }
 
-packageLoad(c("FedData", "rgbif", "tidycensus", "tigris", "nhdplusTools"))
+packageLoad(c("elevatr", "rgbif", "tidycensus", "tigris", "nhdplusTools", "sf", "terra", "dplyr"))
 ```
 
 For this workshop we are focusing on the state of Colorado, so we first download some political boundaries to use to filter the raster layers we want returned. The `tigris` package allows you to directly download TIGER/Line shapefiles from the US Census Bureau.
@@ -37,27 +40,130 @@ counties <- tigris::counties(state = "CO")
 
 ```
 
-Get elevation and landcover raster layers using the [`FedData`](https://github.com/ropensci/FedData) package. The source of the elevation data is the USGS National Elevation Dataset and the source for landcover is the National Land Cover Database (NLCD).
+## Raster Data
+
+Get elevation data using the [`elevatr`](https://github.com/jhollist/elevatr) package. The function `get_elev_raster()` returns a raster digital elevation model (DEM) from the AWS Open Data Terrain Tiles. For this function you must supply a spatial object specifying the extent of the returned elevation raster and the resolution (specified by the zoom level `z`). We are importing elevation at \~ 1km resolution (\~ 900 m).
 
 ```{r}
 #| eval: false
-elevation <- FedData::get_ned(template = counties, label = "co_elevation")
-```
 
-This takes way to long, try elevatr package. Data are saved in environment (temp folder). This package download much faster w/ lower resolutions.
-
-```{r}
-#| eval: false
-# get elevation at ~1000m (864). Much faster, seconds
-elevation2 <- get_elev_raster(counties, z = 7)
+# get elevation at ~1km (864m)
+elevation <- get_elev_raster(counties, z = 7)
 
 terra::writeRaster(elevation2, "data/elevation_1km.tif")
 ```
 
+For this workshop we are also going to work with a land cover raster dataset from the National Land Cover Database (NLCD). You can download NLCD data directly from R using the `FedData` package, however the most updated land cover data available is from 2011. For this course, NLCD 2019 CONUS data was downloaded to my local system from the [MRLC website](https://www.mrlc.gov/data/nlcd-2019-land-cover-conus). The following code is how I read in and cleaned the land cover data for use in this workshop. Processing includes cropping the CONUS dataset to the state of Colorado, and then aggregating (reducing the resolution) of the raster from 30m to \~1km (990m) to make processing and analysis quicker for the workshop.
+
 ```{r}
 #| eval: false
-# 100m resolution takes longer...still under a minute
-elev_100m <- get_elev_raster(counties, z = 10)
 
-terra::writeRaster(elev_100m, "data/elevation_100m.tif")
+# Read in the raster (image) file
+land <- terra::rast('L:/Projects_active/EnviroScreen/data/NLCD/Land Cover/nlcd_2019_land_cover_l48_20210604.img') 
+
+#transform the counties spatial object to match landcover so we can perform crop
+#and mask operations
+counties_aea <- st_transform(counties, crs(land))
+
+# crop the landcover to Colorado
+land_co <- land %>% 
+  terra::crop(vect(counties_aea)) %>%
+  terra::mask(vect(counties_aea))
+
+
+#aggregate to ~1km for ease of processing/analysis in course
+land_co1km <- terra::aggregate(land_co, fact = 33, fun = "modal")
+
+
+# save processed raster file
+terra::writeRaster(land_co1km, filename = "data/NLCD_CO.tif", overwrite = TRUE)
+
 ```
+
+## Point Data
+
+We will be working with some species occurrences in the form of point data (latitude/longitude). `rgbif` is a package that allows you to download species occurrences from the [Global Biodiversity Information Facility (GBIF)](https://www.gbif.org/), a database of global species occurrences with over 2.2 billion records.
+
++-------------------------------------------------------------------------------------------------------------------+:-------------------------------------------:+:------------------------------------------------------------------:+
+| ![Elk; Photo Credit Caitlin Mothes](elk.jpg){alt="Elk; Photo Credit Caitlin Mothes" fig-align="left" width="243"} | ![Test](marmot.jpg){alt="Test" width="396"} | ![]()                                                              |
+|                                                                                                                   |                                             |                                                                    |
+|                                                                                                                   |                                             | ![Test](salamander.jpg){alt="Test" fig-align="center" width="235"} |
++-------------------------------------------------------------------------------------------------------------------+---------------------------------------------+--------------------------------------------------------------------+
+
+```{r}
+#make a string of species names to use in the 'occ_data' function
+species <- c("Cervus canadensis", "Marmota flaviventris", "Ambystoma mavortium")
+
+#also make a string of common names to use for plotting later
+common_name <- c("Elk", "Yellow-bellied Marmot", "Western Tiger Salamander")
+```
+
+```{r}
+#write a for loop to extract occurrence data for each species
+
+## #create an empty vector to store each species' downloaded occurrence data
+occ <- vector("list", length = length(species)) 
+
+
+for(i in 1:length(occ)){
+  
+  occ[[i]] <-
+    occ_data(
+      scientificName = species[i],
+      hasCoordinate = TRUE,
+      geometry = st_bbox(counties),
+      limit = 2000
+    ) %>%
+    .$data #return just the data frame
+  
+  # add species name column as ID to use later
+  occ[[i]]$ID <- common_name[i]
+  
+  #clean by removing duplicate occurrences
+  occ[[i]] <-
+    occ[[i]] %>% distinct(decimalLatitude, decimalLongitude, .keep_all = TRUE) %>%
+    dplyr::select(Species = ID,
+           decimalLatitude,
+           decimalLongitude,
+           year,
+           month,
+           basisOfRecord) #only keep relevant variables
+  
+  
+  
+  print(i) # this prints each element once its finished so you can see the progress
+  
+}
+
+# Bind all data frames together
+occ <- do.call("rbind", occ) 
+```
+
+```{r}
+write.csv(occ, "data/species_occ.csv")
+```
+
+## Line Data
+
+Use the `tigris` package to download linear water features (streams/rivers, braided streams, canals, ditches, artificial paths, and aqueducts) and roads.
+
+```{r}
+rivers <- linear_water(state = "CO", "Larimer")
+
+roads <- roads(state = "CO", county = "Larimer")
+```
+
+## Polygon Data
+
+Urban areas and county level census vars
+
+```{r}
+urban <- urban_areas() %>% 
+  tidyr::separate(col = NAME10, sep = ", ", into = c("city", "state")) %>% 
+  dplyr::filter(state == "CO")
+
+```
+
+## Other Data Libraries
+
+R's collection of data retrieval libraries is extensive. We only use a few of them in this workshop, but I wanted to mention a few other packages that may be of interest
