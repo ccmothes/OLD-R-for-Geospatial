@@ -1,3 +1,15 @@
 ---
 title: "Day 1"
 ---
+
+## Set up an R Project
+
+## Spatial Data Formats
+
+## Read, write, and manipulate spatial data
+
+### Vector Data
+
+### Raster Data
+
+## Coordinate Reference Systems

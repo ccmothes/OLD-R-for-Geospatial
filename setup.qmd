@@ -13,3 +13,29 @@ This is the set-up page for the **R for Geospatial** workshop. You ***must*** co
 While the R software comes with many pre-loaded functions (referred to as 'base R' functions), there are thousands of R packages that provide additional reusable R functions. In order to use these functions you need to first install the package to your local machine using the `install.packages()` function. Once a package is installed on your computer you don't need to install it again (but you may have to update it). Anytime you want to use the package in a new R session you can load it with the `library()` function.
 
 The packages we are using for this workshop are listed below:
+
+Package list:
+
+-   tidycensus
+
+-   tigris
+
+-   rgbif (maybe)
+
+-   sf
+
+-   terra
+
+-   dplyr
+
+-   tidyr (maybe)
+
+-   ggplot2
+
+-   gganimate (maybe with species occurrence data)
+
+-   tmap
+
+-   leaflet (maybe)
+
+-   shiny

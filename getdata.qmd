@@ -25,7 +25,7 @@ packageLoad <-
     }
   }
 
-packageLoad(c("elevatr", "rgbif", "tidycensus", "tigris", "nhdplusTools", "sf", "terra", "dplyr"))
+packageLoad(c("elevatr", "rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr"))
 ```
 
 For this workshop we are focusing on the state of Colorado, so we first download some political boundaries to use to filter the raster layers we want returned. The `tigris` package allows you to directly download TIGER/Line shapefiles from the US Census Bureau.
