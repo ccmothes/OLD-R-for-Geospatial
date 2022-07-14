@@ -16,19 +16,27 @@ The packages we are using for this workshop are listed below:
 
 Package list:
 
+Data retrieval
+
 -   tidycensus
 
 -   tigris
 
--   rgbif (maybe)
+-   rgbif (maybe, if include this part in the lesson)
+
+Processing spatial data
 
 -   sf
 
 -   terra
 
+Data wrangling
+
 -   dplyr
 
--   tidyr (maybe)
+-   tidyr (maybe stringr instead?)
+
+Data vizualization
 
 -   ggplot2
 
@@ -37,5 +45,9 @@ Package list:
 -   tmap
 
 -   leaflet (maybe)
+
+Sharing Data
+
+-   Rmarkdown
 
 -   shiny

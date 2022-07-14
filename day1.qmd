@@ -1,15 +1,172 @@
 ---
 title: "Day 1"
+format: 
+  html:
+    eval: false
 ---
 
 ## Set up an R Project
 
+Download raster data here after setting up project...
+
 ## Spatial Data Formats
 
-## Read, write, and manipulate spatial data
+## Import and manipulate spatial data
+
+Now we have our project set up, packages loaded, let's get some data to work with! For the first part we are going to import spatial data into R using the `tigris`, `tidycensus`, and `rgbif` packages. The raster data has been pre-processed (see Pulling Data for how that was done in R) and we will read those files in from file.
 
 ### Vector Data
 
+#### `tigris`
+
+All the data we are working with in this course is confined to the state of Colorado. Let's start by pulling in political boundaries for Colorado counties with the `tigris` package.
+
+```{r}
+#| message: false
+#| warning: false
+#| results: hide
+
+# download county shapefile for the state of Colorado
+counties <- tigris::counties(state = "CO")
+```
+
+`tigris` has a lot of other available datasets in addition to political boundaries. In this course we are going to work with additional line shape files (rivers and roads) and polygons (urban areas).
+
+Due to the density of rivers and roads in Colorado and therefore large file size, we are going to limit this download to just Larimer County.
+
+```{r}
+rivers <- linear_water(state = "CO", "Larimer")
+
+roads <- roads(state = "CO", county = "Larimer")
+```
+
+Our object `rivers` actually includes all linear water features in the county, such as streams/rivers, braided streams, canals, ditches, artificial paths, and aqueducts.
+
+`counties` is a spatial polygon dataset, we are going to work with one more polygon dataset which includes the boundaries of individual urban areas and clusters across Colorado. We can explore the `urban_areas()` function from the `tigris` package to get more details on how urban areas are defined.
+
+```{r}
+?urban_areas
+```
+
+Now let's download the dataset. By default it imports urban areas for all of the U.S., but we just want areas within Colorado. We have to do some data wrangling to filter out just Colorado urban areas. The column "NAME10" has the city and state of each urban area. We can use the `separate()` function from the `tidyr` package to split the "NAME10" column into two separte columns for city and state, and then we can use the `filter()` function to subset just the urban areas in Colorado.
+
+We are also using a new function here, the pipe `%>%` operator. This allows us to run a sequence of operations without having to create intermediate objects that take up unnecessary space in your environment. It can be interpreted as 'and then', taking the output of one function 'and then' running the next function using that output as the input. More on the pipe operator can be found in the R Basics section.
+
+```{r}
+urban <- urban_areas() %>% 
+  tidyr::separate(col = NAME10, sep = ", ", into = c("city", "state")) %>% 
+  dplyr::filter(state == "CO")
+```
+
+#### `tidycensus`
+
+Tidycensus is an R package that allows users to access U.S. Census data, imported as "tidy" data designed to work with tidyverse packages (read more about the Tidyverse in the R Basics section).
+
+This package requires the use of an API key to download data. You can obtain an API key for free at <http://api.census.gov/data/key_signup.html>
+
+Once you have the API key, you need to run the following line of code before downloading any census data:
+
+```{r}
+census_api_key("PASTE YOUR API KEY HERE")
+```
+
+```{r}
+#| echo: false
+
+census_api_key("0ab15d4d7d8a87694979e5d5667502b365ae96f9")
+```
+
+Now let's first investigate what census variables are available (there's a lot). `tidycesus` has two major functions: `get_decennial()` to access the 2000, 2010, and 2020 decennial U.S. Census data, and `get_acs()` to access the 1-year and 5-year American Community Survey (ACS) data. For this workshop we are going to work with ACS data.
+
+We can get the full list of available variables with the `load_variables()` function, and we are interested in the 5-year ACS data for 2019 (the most recent year available). We then pass this output to `View()` which will open the data frame in a separate tab to be viewed similar to an excel spreadsheet.
+
+```{r}
+load_variables(2019, "acs5") %>% View()
+```
+
+We are going to download total population, total born in their state of residence, total born in another U.S. state outside of their residence, and total born outside the U.S. We use the `get_acs()` function and specify we want this data at the county level for the state of Colorado and supply a string of the variables we want, using the variable ID.
+
+```{r}
+census <- get_acs(geography = "county", state = "CO", year = 2019,
+                  variables = c("B01003_001", "B06001_013", "B06001_025", "B06001_049"), output = "wide")
+```
+
+Let's clean this up a bit. E stands for estimate and M is margin of error. For our purposes we are only looking at the estimate values, so lets remove the other columns and rename the ones we keep with more informative titles.
+
+```{r}
+census <- census %>% 
+  dplyr::select(contains("E")) %>% 
+  rename(total_pop = B01003_001E, co_born = B06001_013E, non_co_born = B06001_025E,
+         non_us_born = B06001_049E)
+```
+
+Make it spatial
+
+```{r}
+census <- full_join(census, counties, by = "GEOID")
+```
+
+#### `rgbif`
+
+The last of our spatial data download is species occurrences in the form of point data (latitude/longitude). `rgbif` is a package that allows you to download species occurrences from the [Global Biodiversity Information Facility (GBIF)](https://www.gbif.org/), a database of global species occurrences with over 2.2 billion records.
+
+```{r}
+#make a string of species names to use in the 'occ_data' function
+species <- c("Cervus canadensis", "Marmota flaviventris", "Ambystoma mavortium")
+
+#also make a string of common names to use for plotting later
+common_name <- c("Elk", "Yellow-bellied Marmot", "Western Tiger Salamander")
+```
+
+```{r}
+#write a for loop to extract occurrence data for each species
+
+## #create an empty vector to store each species' downloaded occurrence data
+occ <- vector("list", length = length(species)) 
+
+
+for(i in 1:length(occ)){
+  
+  occ[[i]] <-
+    occ_data(
+      scientificName = species[i],
+      hasCoordinate = TRUE,
+      geometry = st_bbox(counties),
+      limit = 2000
+    ) %>%
+    .$data #return just the data frame
+  
+  # add species name column as ID to use later
+  occ[[i]]$ID <- common_name[i]
+  
+  #clean by removing duplicate occurrences
+  occ[[i]] <-
+    occ[[i]] %>% distinct(decimalLatitude, decimalLongitude, .keep_all = TRUE) %>%
+    dplyr::select(Species = ID,
+           decimalLatitude,
+           decimalLongitude,
+           year,
+           month,
+           basisOfRecord) #only keep relevant variables
+  
+  
+  
+  print(i) # this prints each element once its finished so you can see the progress
+  
+}
+
+# Bind all data frames together
+occ <- do.call("rbind", occ) 
+```
+
 ### Raster Data
 
+Quick plot to view raster files
+
 ## Coordinate Reference Systems
+
+Check CRS
+
+Project all to match
+
+## Saving spatial data
