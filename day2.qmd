@@ -1,3 +1,156 @@
 ---
 title: "Day 2"
+format: 
+  html:
+    eval: false
 ---
+
+# Spatial Data Analysis
+
+Read in packages for today:
+
+```{r}
+#library(tidyr)
+library(dplyr)
+library(sf)
+library(terra)
+library(tmap)
+library(ggplot2)
+```
+
+## Distance Calculations
+
+Read in our spatial data.
+
+```{r}
+occ <- read.csv("data/species_occ.csv") %>% 
+  st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
+```
+
+Quick plot with tmap. tmap has both static ("plot" mode) and interactive ("view" mode) options. For exploring data today we are going to make a bunch of quick plots in interactive mode. Once you set the mode with `tmap_mode()`, every plot call to tmap after that produces a plot in that mode.
+
+```{r}
+tmap_mode("view")
+```
+
+Quick view of all our points, colored by species:
+
+```{r}
+tm_shape(occ) +
+  tm_symbols(col = "Species", size = 0.5)
+```
+
+Find out for each species, average distance to rivers and roads. This involves point to line distance calculations, which we can perform with the `sf` package.
+
+Read in river and roads shapefiles:
+
+```{r}
+rivers <- st_read("data/rivers.shp")
+
+roads <- st_read("data/roads.shp")
+```
+
+Before performing any spatial operations, all of our spatial object must be in the same CRS. Our occurrences don't have a set CRS yet, so we will use the `st_crs` function to set the CRS to the same as
+
+```{r}
+st_crs(rivers)
+st_crs(roads)
+```
+
+Transform occurrences, easier to transform one object instead of two.
+
+```{r}
+occ <- st_transform(occ, crs = st_crs(rivers))
+```
+
+Also, our occurrence dataset covers all of Colorado, but rivers and roads are only for Larimer County. We have to first filter our points to the extent of the rivers and roads objects. However, the extent of these is a square bounding box, not the exact boundary of Larimer county. We can subset Larimer county from our Colorado counties object, and use `st_filter` to filter points the are found within the Larimer county polygon.
+
+```{r}
+occ_larimer <- st_filter(occ, counties[counties$NAME == "Larimer",])
+
+qtm(occ_larimer)
+```
+
+Calculate distance: https://gis.stackexchange.com/questions/349955/getting-a-new-column-with-distance-to-the-nearest-feature-in-r
+
+Most efficient way, first find for each point the closest line feature. Start with rivers and apply the same methods to roads.
+
+```{r}
+occ_larimer$nearest_river <- st_nearest_feature(occ_larimer, rivers)
+```
+
+This returns index values (row number) of the river in `rivers` that is closest to each point. Now we can use those index numbers to calculate distance.
+
+```{r}
+occ_larimer$river_dist_m <- st_distance(occ_larimer, rivers[occ_larimer$nearest_river,], by_element = TRUE)
+```
+
+Find average distance for each species and plot
+
+```{r}
+occ_larimer %>% 
+  group_by(Species) %>% 
+  summarise(river_dist = (mean(as.numeric(river_dist_m)))/1000) %>% 
+
+  ggplot(aes(Species, river_dist, fill = Species)) +
+  geom_col()
+```
+
+No do the same with roads
+
+```{r}
+occ_larimer$nearest_road <- st_nearest_feature(occ_larimer, roads)
+
+occ_larimer$road_dist_m <- st_distance(occ_larimer, roads[occ_larimer$nearest_road,], by_element = TRUE)
+
+occ_larimer %>% 
+  group_by(Species) %>% 
+  summarise(road_dist = (mean(as.numeric(road_dist_m)))/1000) %>% 
+
+  ggplot(aes(Species, road_dist, fill = Species)) +
+  geom_col()
+```
+
+## Buffers
+
+buffer around species occ (polygon object). Since coords are in decimal degrees, `st_buffer` assumes the given dist unit is in arc degrees. 30 arc seconds (\~0.0083 arc degrees) equals 1 km.
+
+Do this with just the larmier occ to reduce comp time
+
+```{r}
+occ_buffer <- st_buffer(occ_larimer, dist = 0.06)
+
+qtm(occ_buffer)
+```
+
+Plot (qtm)
+
+## Raster Reclassification
+
+Reclassify land cover
+
+plot (qtm)
+
+## Zonal Statistics
+
+Average land cover type (canopy/urban) w/in each species buffer
+
+bar plot species comparison
+
+Most common landcover type w/in each county
+
+bar plot and map (qtm)
+
+## Spatial Intersect
+
+\% urban area w/in each county
+
+Map (qtm) color county by % urban area
+
+st_centroid -\> map by proportional symbols
+
+## Spatial Joins
+
+join urban areas w/ census and \# spec occ (tidy operations on spatial data frames)
+
+correlations (plot)

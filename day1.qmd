@@ -7,7 +7,50 @@ format:
 
 ## Set up an R Project
 
+R project
+
+Call in libraries
+
+```{r}
+#| warning: false
+#| message: false
+#| 
+packageLoad <-
+  function(x) {
+    for (i in 1:length(x)) {
+      if (!x[i] %in% installed.packages()) {
+        install.packages(x[i])
+      }
+      library(x[i], character.only = TRUE)
+    }
+  }
+
+packageLoad(c("rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr", "tidyr"))
+```
+
+```{r}
+#| eval: true
+#| echo: false
+#| warning: false
+library(downloadthis)
+```
+
 Download raster data here after setting up project...
+
+```{r}
+#| eval: true
+#| echo: false
+#| message: false
+
+download_dir(
+  path = "data",
+  output_name = "course-data",
+  button_label = "Download Data",
+  button_type = "success",
+  icon = "fa fa-save",
+  self_contained = FALSE
+)
+```
 
 ## Spatial Data Formats
 
@@ -170,3 +213,13 @@ Check CRS
 Project all to match
 
 ## Saving spatial data
+
+```{r}
+st_write(rivers, "data/rivers.shp", append = FALSE) #if the file already exists
+
+st_write(roads, "data/roads.shp")
+
+st_write(urban, "data/urban_areas.shp")
+
+st_write(census, "data/census_data.shp")
+```
