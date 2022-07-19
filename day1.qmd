@@ -143,12 +143,6 @@ census <- census %>%
          non_us_born = B06001_049E)
 ```
 
-Make it spatial
-
-```{r}
-census <- full_join(census, counties, by = "GEOID")
-```
-
 #### `rgbif`
 
 The last of our spatial data download is species occurrences in the form of point data (latitude/longitude). `rgbif` is a package that allows you to download species occurrences from the [Global Biodiversity Information Facility (GBIF)](https://www.gbif.org/), a database of global species occurrences with over 2.2 billion records.
@@ -221,5 +215,7 @@ st_write(roads, "data/roads.shp")
 
 st_write(urban, "data/urban_areas.shp")
 
-st_write(census, "data/census_data.shp")
+write_csv(census, "data/census_data.csv")
+
+write_csv(occ, "data/species_occ.csv")
 ```

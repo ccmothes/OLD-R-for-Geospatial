@@ -36,6 +36,8 @@ Data wrangling
 
 -   tidyr (maybe stringr instead?)
 
+-   readr (reading and writing tabular data)
+
 Data vizualization
 
 -   ggplot2

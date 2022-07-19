@@ -12,6 +12,7 @@ Read in packages for today:
 ```{r}
 #library(tidyr)
 library(dplyr)
+library(readr)
 library(sf)
 library(terra)
 library(tmap)
@@ -23,7 +24,7 @@ library(ggplot2)
 Read in our spatial data.
 
 ```{r}
-occ <- read.csv("data/species_occ.csv") %>% 
+occ <- read_csv("data/species_occ.csv") %>% 
   st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 ```
 
@@ -66,6 +67,8 @@ occ <- st_transform(occ, crs = st_crs(rivers))
 Also, our occurrence dataset covers all of Colorado, but rivers and roads are only for Larimer County. We have to first filter our points to the extent of the rivers and roads objects. However, the extent of these is a square bounding box, not the exact boundary of Larimer county. We can subset Larimer county from our Colorado counties object, and use `st_filter` to filter points the are found within the Larimer county polygon.
 
 ```{r}
+counties <- st_read("data/CO_counties.shp")
+
 occ_larimer <- st_filter(occ, counties[counties$NAME == "Larimer",])
 
 qtm(occ_larimer)
@@ -113,44 +116,205 @@ occ_larimer %>%
 
 ## Buffers
 
-buffer around species occ (polygon object). Since coords are in decimal degrees, `st_buffer` assumes the given dist unit is in arc degrees. 30 arc seconds (\~0.0083 arc degrees) equals 1 km.
+Alternatively, say you want to know what percentage of species' occurrences were found within a certain distance of a river or a road.
 
-Do this with just the larmier occ to reduce comp time
+To do this we can add a buffer around our polyline objects and filter the points that fall within that buffer zone. (this takes a while...)
 
 ```{r}
-occ_buffer <- st_buffer(occ_larimer, dist = 0.06)
-
-qtm(occ_buffer)
+river_buffer <- st_buffer(rivers, dist = 100)
 ```
 
-Plot (qtm)
+Instead, a more efficient way would be to make a 100 m buffer around each point, and see how many intersect with a river or road.
 
-## Raster Reclassification
+```{r}
+occ_buffer <- st_buffer(occ_larimer, dist = 100)
 
-Reclassify land cover
+```
 
-plot (qtm)
-
-## Zonal Statistics
-
-Average land cover type (canopy/urban) w/in each species buffer
-
-bar plot species comparison
-
-Most common landcover type w/in each county
-
-bar plot and map (qtm)
+Much faster.
 
 ## Spatial Intersect
 
-\% urban area w/in each county
+Use the function `st_intersect` to test for each buffer polygon, does it intersect with a river, and if so it returns an index value for each river feature it intersects. This function returns a list object for each buffer polygon, that will be empty if there are no intersections. We will add this as a column to our buffer dataset, and then create a binary yes/no river intersection column based on those results.
 
-Map (qtm) color county by % urban area
+```{r}
+river_intersections <- st_intersects(occ_buffer, rivers)
+```
 
-st_centroid -\> map by proportional symbols
+Inspect this object.
 
-## Spatial Joins
+```{r}
+occ_buffer$river_100m <- lengths(river_intersections) > 0
+```
 
-join urban areas w/ census and \# spec occ (tidy operations on spatial data frames)
+Find what percentage of occurrences are within 100m of a river for each species
 
-correlations (plot)
+```{r}
+occ_buffer %>% 
+  st_drop_geometry() %>% 
+  group_by(Species) %>% 
+  summarise(total_occ = n(), percent_river = (sum(river_100m == TRUE)/total_occ)*100)
+```
+
+Now lets do another type of intersection. Say we want to know the percent of each county that is defined as 'urban area', using our urban areas polygons.
+
+```{r}
+urban <- st_read("data/urban_areas.shp")
+```
+
+```{r}
+urban_intersect <- st_intersection(counties, urban)
+```
+
+We see that there are more rows than the original dataset, meaning some urban areas cross multiple counties.
+
+To clean this data to get the results we're interested in (percentage of each county that is covered by urban areas) we will first calculate the area of each urban area, sum the total area per county, and divide that by total county area.
+
+```{r}
+intersect_area <- urban_intersect %>% 
+  mutate(intersect_area = st_area(.)) %>% #create a new column with shape area
+  dplyr::select(NAME, intersect_area) %>%
+  group_by(NAME) %>% 
+  summarise(intersect_area = sum(intersect_area)) %>% 
+  st_drop_geometry()
+```
+
+Join this to our counties shapefile to calculate percent urban area coverage
+
+```{r}
+counties_urban <- counties %>%
+  mutate(county_area = st_area(.)) %>%
+  left_join(intersect_area, by = "NAME") %>%
+  mutate(urban_coverage = as.numeric(intersect_area / county_area))
+```
+
+```{r}
+tm_shape(counties_urban) +
+  tm_fill("urban_coverage")
+  
+```
+
+```{r}
+tm_shape(counties_urban) +
+  tm_symbols("urban_coverage")
+```
+
+Okay, nothing too surprising here...but you learned some cool new tools related to spatial intersections!
+
+## Spatial Joins (?)
+
+So we have % urban...not much variation though. Lets combine this with our census data
+
+```{r}
+census <- read_csv("data/census_data.csv") %>% 
+  dplyr::select(-NAME)
+```
+
+Let's join this to our counties dataset. First we want to remove the 'NAME' column, because it is slightly different than the 'NAME' column in counties, and we can join by matching 'GEOID', which is a unique numeric ID given to each county.
+
+```{r}
+counties_urban <- counties_urban %>% 
+  left_join(census, by = "GEOID")
+```
+
+Lastly, lets see how many species occurrences are in each county
+
+```{r}
+counties_urban$species_count <- lengths(st_intersects(counties_urban, occ))
+```
+
+```{r}
+counties_urban %>% 
+  st_drop_geometry() %>% 
+  ggplot(aes(total_pop, species_count)) +
+  geom_point() +
+  stat_smooth()
+```
+
+```{r}
+# urban area related to co_born
+counties_urban %>% 
+  st_drop_geometry() %>% 
+  ggplot(aes(urban_coverage, species_count)) +
+  geom_point() +
+  stat_smooth()
+```
+
+Do some more plotting with this data tomorrow (multi-layers/symbols). Explore more relationships
+
+## Raster Reclassification
+
+We've dealt with a bunch of vector data so far, lets work through some raster analysis.
+
+Read in our landcover and elevation data. Using the `terra` package for the first time now.
+
+```{r}
+landcover <- terra::rast("data/NLCD_CO.tif")
+
+elevation <- terra::rast("data/elevation_1km.tif")
+
+```
+
+This NLCD dataset assigns landcover names to cells (instead of values).
+
+```{r}
+freq(landcover)
+```
+
+Make a barplot of `freq` of each type.
+
+Say we want to explore some habitat characteristics of our species of interest. Specifically, calculate the average percentage of forest cover and urbanization within a 9x9 pixel moving window.
+
+First lets reclassify our landcover raster, creating two new raster representing just forest/non-forest and urban/non-urban.
+
+Since rasters are technically matrices, we can index and change values using matrix operations. Given this particular raster uses character names instead of values, we index by those names.
+
+```{r}
+#first assign landcover to a new object name so we can manipulate it while keeping the origian
+forest <- landcover
+
+#where the raster equals any of the forest categories, set that value to 1
+forest[forest %in% c("Deciduous Forest", "Evergreen Forest", "Mixed Forest")] <- 1
+
+#SPELLING IS IMPORTANT
+
+#now set all non forest pixels to NA
+forest[forest != 1] <- NA
+```
+
+## Focal Statistics
+
+Now perform
+
+```{r}
+forest_pct <- terra::focal(forest, w=matrix(1,9,9), fun = "sum", na.rm = TRUE)
+```
+
+This is just the sum of all pixels within the 9x9km window that were forest. To get the percentage we can perform some raster calculations, dividing by the total number of pixels in the moving window (since our pixel values were 1)
+
+```{r}
+forest_pct <- forest_pct/81
+```
+
+Do the same with urban areas?
+
+Extract values to points
+
+Need to project raster first
+
+```{r}
+forest_pct <- project(forest_pct, vect(occ))
+```
+
+## Raster Extract
+
+```{r}
+{r}
+occ$forest_pct <- terra::extract(forest_pct, vect(occ))
+```
+
+bar plot species comparison
+
+Most common landcover type w/in each county (extract, fun = "modal")
+
+bar plot and map (qtm)
