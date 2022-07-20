@@ -9,6 +9,14 @@ format:
 
 We did some basic plotting yesterday to view the results of our spatial analyses. Today we will be working with some more advanced mapping techniques, plotting multiple spatial layers together, and learn how to make these interactive and ways to share data and visualizations with others.
 
+Prep the libraries for today. Load in our `packageLoad()` function that we have now saved as a scripts. You can run other scripts using the `source()` function.
+
+```{r}
+source("packageLoad.R")
+
+packageLoad(c(""))
+```
+
 ## Data visualization with multiple layers/variables
 
 ### Faceting
