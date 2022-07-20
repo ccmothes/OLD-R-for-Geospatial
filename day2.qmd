@@ -308,13 +308,101 @@ forest_pct <- project(forest_pct, vect(occ))
 
 ## Raster Extract
 
+See what extract returns first
+
 ```{r}
-{r}
-occ$forest_pct <- terra::extract(forest_pct, vect(occ))
+terra::extract(forest_pct, vect(occ))
 ```
 
-bar plot species comparison
+```{r}
+occ$forest_pct <- terra::extract(forest_pct, vect(occ), fun = max)[,2]
+```
 
-Most common landcover type w/in each county (extract, fun = "modal")
+Now we can do some data frame operations to calculate and comapre average forest cover across species
 
-bar plot and map (qtm)
+```{r}
+occ %>% 
+  group_by(Species) %>% 
+  summarise(avg_forest_pct = mean(forest_pct, na.rm = TRUE))
+```
+
+```{r}
+occ %>% 
+  group_by(Species) %>% 
+  summarise(avg_forest_pct = mean(forest_pct, na.rm = TRUE)) %>% 
+  ggplot(aes(Species, avg_forest_pct, fill = Species))+
+  geom_col() +
+  theme(legend.position = "bottom")
+```
+
+Make a boxplot
+
+```{r}
+ggplot(occ, aes(Species, forest_pct)) +
+  geom_boxplot()
+  
+```
+
+That's one way to use the `extract` function. We can also extract raster values within polygons, and supply a function to summarize those raster values.
+
+Say we wanted to know the most common landcover type in each county. We can use `extract` with the function 'modal' to return the most common type for each polygon, and we will add this as a new column.
+
+```{r}
+landcover_prj <- project(landcover, vect(counties))
+```
+
+```{r}
+terra::extract(landcover_prj, vect(counties), fun = "modal")
+
+```
+
+This works...but we will need to tie the values to their landcover class. This raster behaves such that values are named factors.
+
+We can use the `cats` function
+
+```{r}
+cats(landcover)
+```
+
+This returns a list with a single element that is a data frame with a bunch of information. We just want to keep 'value' and 'NLCD Land Cover Class", and remove all the empty classes. We have to first index the first element of the list to operate on just the data frame, then we can apply some `dplyr` functions
+
+```{r}
+nlcd_classes <- cats(landcover)[[1]] %>% 
+  dplyr::select("value", nlcd_class = "NLCD Land Cover Class") %>% 
+  filter(nlcd_class != "")
+```
+
+Cool, now we can tie this to our counties data frame once we have the most common landcover value calculated with `extract`
+
+```{r}
+counties$common_landcover <- terra::extract(landcover_prj, vect(counties), fun = "modal")[,2]
+```
+
+Now we can join to the nlcd_classes object by the landcover value
+
+```{r}
+counties <- counties %>% 
+  left_join(nlcd_classes, by = c("common_landcover" = "value"))
+```
+
+We can get some summary statistics on the most common land cover types
+
+```{r}
+counties %>% 
+  st_drop_geometry() %>% #for ggplot, don't need geometry
+  group_by(nlcd_class) %>% 
+  summarise(n = n()) %>% 
+  ggplot(aes(nlcd_class, n, fill = nlcd_class)) +
+  geom_col()+
+  theme(legend.position = "none")+
+  coord_flip()
+```
+
+Map it out by county
+
+```{r}
+tm_shape(counties)+
+  tm_polygons("nlcd_class")
+```
+
+Save the updated datasets we made here

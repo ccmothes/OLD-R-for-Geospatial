@@ -1,3 +1,38 @@
 ---
 title: "Day 3"
+format: 
+  html:
+    eval: false
 ---
+
+# Spatial Data Visualization and Sharing
+
+We did some basic plotting yesterday to view the results of our spatial analyses. Today we will be working with some more advanced mapping techniques, plotting multiple spatial layers together, and learn how to make these interactive and ways to share data and visualizations with others.
+
+## Data visualization with multiple layers/variables
+
+### Faceting
+
+By species, by census var
+
+### Map layers
+
+st_centroid, proportional symbols on top of colors
+
+## Animation
+
+Year of species observation
+
+## Interactive Mapping
+
+Customization with pop-ups/palettes
+
+## Data Sharing
+
+### R Markdown
+
+Quick report of plots produced above
+
+### Shiny
+
+Make one like in job demo
