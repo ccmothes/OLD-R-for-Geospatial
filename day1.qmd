@@ -25,7 +25,14 @@ packageLoad <-
     }
   }
 
-packageLoad(c("rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr", "tidyr"))
+```
+
+We will be using this function the rest of the workshop, so lets store it as its own R script that we can call in later with the `source()` function. Sourcing functions is good practice as it reduces repetitiveness of rewriting them every time you want to use it.
+
+Now let's use it to load in our libraries needed for today. Assuming you already installed all of these in the [Getting Started](setup.qmd) page, loading them should run pretty quick.
+
+```{r}
+packageLoad(c("rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr", "tidyr", "readr"))
 ```
 
 ```{r}

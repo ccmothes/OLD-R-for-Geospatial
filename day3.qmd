@@ -17,6 +17,16 @@ source("packageLoad.R")
 packageLoad(c(""))
 ```
 
+Read in data from yesterday. Since we save these are R objects in an `.RData` format, we load those objects back into the session with `load().`
+
+Note that if we saved a `.RData` file in the main project directory, these objects would load in the environment every time you open a new session. This is related to the question you may get every time you close out of R Studio that says "Do you want to save your workspace". It is best practice to always say no (you can set this in your global options) otherwise you will be saving your entire R environment every time which likely consists of too much extra data you don't need. Here we are saving the objects we know we will use again and that had required quite a bit of code to create them.
+
+```{r}
+load("data/objects.RData") #path to the .RData file,
+
+
+```
+
 ## Data visualization with multiple layers/variables
 
 ### Faceting
@@ -27,13 +37,19 @@ By species, by census var
 
 st_centroid, proportional symbols on top of colors
 
+Color by total population, size by \# species? Add roads/urban areas
+
+Add Elk occ on top of urban areas
+
+elevation + species Occ
+
 ## Animation
 
 Year of species observation
 
 ## Interactive Mapping
 
-Customization with pop-ups/palettes
+Customization with pop-ups/palettes (elevation/occurrences)
 
 ## Data Sharing
 

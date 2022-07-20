@@ -10,13 +10,15 @@ format:
 Read in packages for today:
 
 ```{r}
-#library(tidyr)
-library(dplyr)
-library(readr)
-library(sf)
-library(terra)
-library(tmap)
-library(ggplot2)
+source("packageLoad.R")
+
+packageLoad(c("dplyr",
+              "readr",
+              "sf",
+              "terra",
+              "tmap",
+              "ggplot2"))
+
 ```
 
 ## Distance Calculations
@@ -111,7 +113,8 @@ occ_larimer %>%
   summarise(road_dist = (mean(as.numeric(road_dist_m)))/1000) %>% 
 
   ggplot(aes(Species, road_dist, fill = Species)) +
-  geom_col()
+  geom_col() +
+  theme(legend.position = "none")
 ```
 
 ## Buffers
@@ -121,6 +124,7 @@ Alternatively, say you want to know what percentage of species' occurrences were
 To do this we can add a buffer around our polyline objects and filter the points that fall within that buffer zone. (this takes a while...)
 
 ```{r}
+#| eval: false
 river_buffer <- st_buffer(rivers, dist = 100)
 ```
 
@@ -131,7 +135,7 @@ occ_buffer <- st_buffer(occ_larimer, dist = 100)
 
 ```
 
-Much faster.
+Still takes a little bit of run time, but much faster than buffering the polyline shapefile.
 
 ## Spatial Intersect
 
@@ -166,7 +170,7 @@ urban <- st_read("data/urban_areas.shp")
 urban_intersect <- st_intersection(counties, urban)
 ```
 
-We see that there are more rows than the original dataset, meaning some urban areas cross multiple counties.
+We see that there are more rows than the original data set, meaning some urban areas cross multiple counties.
 
 To clean this data to get the results we're interested in (percentage of each county that is covered by urban areas) we will first calculate the area of each urban area, sum the total area per county, and divide that by total county area.
 
@@ -179,31 +183,38 @@ intersect_area <- urban_intersect %>%
   st_drop_geometry()
 ```
 
-Join this to our counties shapefile to calculate percent urban area coverage
+Join this to our counties shapefile to calculate percent urban area coverage. We are going to create a new counties object called `counties_attr` that we will be adding a lot of other county-level attributes to.
 
 ```{r}
-counties_urban <- counties %>%
+counties_attr <- counties %>%
   mutate(county_area = st_area(.)) %>%
   left_join(intersect_area, by = "NAME") %>%
   mutate(urban_coverage = as.numeric(intersect_area / county_area))
 ```
 
 ```{r}
-tm_shape(counties_urban) +
+tm_shape(counties_attr) +
   tm_fill("urban_coverage")
   
 ```
 
 ```{r}
-tm_shape(counties_urban) +
+tm_shape(counties_attr) +
   tm_symbols("urban_coverage")
+```
+
+Can also look at total urban area instead of percent of county
+
+```{r}
+tm_shape(counties_attr) +
+  tm_fill("intersect_area")
 ```
 
 Okay, nothing too surprising here...but you learned some cool new tools related to spatial intersections!
 
 ## Spatial Joins (?)
 
-So we have % urban...not much variation though. Lets combine this with our census data
+So we have % urban...not much variation though. Lets combine this with our census data.
 
 ```{r}
 census <- read_csv("data/census_data.csv") %>% 
@@ -213,18 +224,18 @@ census <- read_csv("data/census_data.csv") %>%
 Let's join this to our counties dataset. First we want to remove the 'NAME' column, because it is slightly different than the 'NAME' column in counties, and we can join by matching 'GEOID', which is a unique numeric ID given to each county.
 
 ```{r}
-counties_urban <- counties_urban %>% 
+counties_attr <- counties_attr %>% 
   left_join(census, by = "GEOID")
 ```
 
 Lastly, lets see how many species occurrences are in each county
 
 ```{r}
-counties_urban$species_count <- lengths(st_intersects(counties_urban, occ))
+counties_attr$species_count <- lengths(st_intersects(counties_attr, occ))
 ```
 
 ```{r}
-counties_urban %>% 
+counties_attr %>% 
   st_drop_geometry() %>% 
   ggplot(aes(total_pop, species_count)) +
   geom_point() +
@@ -233,7 +244,7 @@ counties_urban %>%
 
 ```{r}
 # urban area related to co_born
-counties_urban %>% 
+counties_attr %>% 
   st_drop_geometry() %>% 
   ggplot(aes(urban_coverage, species_count)) +
   geom_point() +
@@ -405,4 +416,26 @@ tm_shape(counties)+
   tm_polygons("nlcd_class")
 ```
 
-Save the updated datasets we made here
+## Save Data
+
+Save `counties_attr` and update occ?
+
+Before writing to file, let's get rid of some of the extra columns we don't need.
+
+```{r}
+counties_attr <- counties_attr %>% 
+  dplyr::select(-c(NAMELSAD:INTPTLON))
+```
+
+```{r}
+#| eval: false
+st_write(counties_attr, "data/counties_attr.shp", append = FALSE)
+```
+
+When writing spatial files the column names get abbreviated (removes vowels). Could save as R object instead?
+
+Save objects to .RData file that can be loaded back in another session
+
+```{r}
+save(counties_attr, occ_buffer, occ_larimer, occ, file = "data/objects.RData")
+```
