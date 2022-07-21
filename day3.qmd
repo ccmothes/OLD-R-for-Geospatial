@@ -14,42 +14,343 @@ Prep the libraries for today. Load in our `packageLoad()` function that we have 
 ```{r}
 source("packageLoad.R")
 
-packageLoad(c(""))
+packageLoad(c("tmap", ""))
 ```
 
-Read in data from yesterday. Since we save these are R objects in an `.RData` format, we load those objects back into the session with `load().`
+Read in data from yesterday. Since we save these are R objects in an `.RData` format, we load those objects back into the session with `load()`.
 
 Note that if we saved a `.RData` file in the main project directory, these objects would load in the environment every time you open a new session. This is related to the question you may get every time you close out of R Studio that says "Do you want to save your workspace". It is best practice to always say no (you can set this in your global options) otherwise you will be saving your entire R environment every time which likely consists of too much extra data you don't need. Here we are saving the objects we know we will use again and that had required quite a bit of code to create them.
 
 ```{r}
 load("data/objects.RData") #path to the .RData file,
+```
 
-
+```{r}
+#| echo: false
+# load in objects for testing
+load("data_test/objects.RData")
 ```
 
 ## Data visualization with multiple layers/variables
 
+### Mapping with `ggplot2`
+
+Basic plot
+
+```{r}
+plot(counties_attr$geometry)
+```
+
+Map with `ggplot2` use the `geom_sf()` function. Say we want to fill with our total population variable
+
+```{r}
+ggplot(data = counties_attr, aes(fill = total_pop)) +
+  geom_sf()
+```
+
+`geom_sf()` interprets the geometry of the sf object and visualizes it with the 'fill' value given.
+
+#### Customizing `ggplot2` maps
+
+```{r}
+ggplot(data = counties_attr, aes(fill = total_pop)) +
+  geom_sf() +
+  scale_fill_distiller(palette = "OrRd", direction = 1) +
+  labs(title = "Total Population by Colorado County, 2019",
+       fill = "Total Population",
+       caption = "Data source: 2019 5-year ACS, US Census Bureau") +
+  theme_void()
+```
+
+### Mapping with `tmap`
+
+We've already been using the `qtm()` function with `tmap` to quickly view our results, but there are also a lot of ways to create custom cartographic products with this package.
+
+Set `tmap_mode()` to "plot" to make static maps, in case you were still set to interactive mode from yesterday.
+
+```{r}
+tmap_mode("plot")
+```
+
+General structure is first initialize the map with `tm_shape` supplied with the sf object, and then the following function depends on what geometry or symbology you want. We are going to first symbolize by our county polygons so will use the `tm_polygons()` function.
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons()
+```
+
+Color the polygons by a variable
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(col = "total_pop")
+```
+
+A difference we see between `tmap` plots and `ggplot2` plot defaults is `tmap` uses a classified color scheme rather than a continuous once. By default `tmap` sets the classification based on the data range, here choosing intervals of 200,000.
+
+Given this classified structure, say you also wanted to see the distribution of the raw values
+
+```{r}
+hist(counties_attr$total_pop)
+```
+
+We can manually change the classification within the `tm_polygons()` function. Let's try using a quantile method, where each class contains the same number of counties.
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(col = "total_pop",
+              style = "quantile",
+              n = 5,
+              title = "Total Population by County")+
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE)
+```
+
+Can see a little more heterogeneity now. We can even add our histogram of the data distribution to the plot too with `legend.hist = TRUE`.
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(col = "total_pop",
+              style = "quantile",
+              palette = "Purples",
+              n = 5,
+              title = "Total Population by County",
+              legend.hist = TRUE)+
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE,
+            legend.hist.width = 5)
+```
+
+Easy to add more customization like a compass and scale bar.
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(col = "total_pop",
+              style = "quantile",
+              palette = "Purples",
+              n = 5,
+              title = "Total Population by County",
+              legend.hist = TRUE)+
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE,
+            legend.hist.width = 5) +
+  tm_scale_bar(position = c("left", "bottom")) +
+  tm_compass(position = c("right", "top")) +
+  tm_credits("Map credit ...", position = c("right", "bottom"))
+```
+
+Can also view attributes as graduated symbols with `tm_bubbles()`
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons() +  # add base county boundaries
+  tm_bubbles(size = "total_pop",
+             col = "red",
+             alpha = 0.5) +
+  tm_layout(legend.outside = TRUE,
+            legend.outside.position = "bottom")
+```
+
+Adding multiple layers. Say color by total population and add graduated symbols for number of species occurrences/county
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(col = "total_pop",
+              style = "quantile", n = 5) +
+  tm_bubbles(size = "non_us_born_pct",
+             col = "navy",
+             alpha = 0.5,
+             title.size = "Birthplace Outside U.S.") +
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE,
+            legend.outside.position = "right")
+```
+
+Can also add layers from different sf objects by calling a new `tm_shape`
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(col = "total_pop",
+              style = "quantile",
+              palette = "Greys",
+               n = 5) +
+tm_shape(occ) +
+  tm_symbols(col = "Species",
+             palette = "Dark2",
+             alpha = 0.8,
+             size = 0.5) +
+  tm_layout(frame = FALSE,
+            legend.outside = TRUE,
+            legend.outside.position = "right")
+```
+
+Can't decide on a color palette? `tmap` has a built in tool that allows you decide.
+
+```{r}
+tmaptools::palette_explorer()
+```
+
+Want a cool `tmap` tip?
+
+```{r}
+tmap_tip()
+```
+
 ### Faceting
 
-By species, by census var
+Say you want to compare across multiple variables? Can quickly do that with `tm_facets()` or by supplying a string of column names within `tm_polygons` depending on the format of your data.
 
-### Map layers
+Compare across our different census vars.
 
-st_centroid, proportional symbols on top of colors
+First manipulate data, change birth place vars to %.
 
-Color by total population, size by \# species? Add roads/urban areas
+```{r}
+counties_attr <- counties_attr %>% 
+  mutate(co_born_pct = co_born/total_pop,
+         non_co_born_pct = non_co_born/total_pop,
+         non_us_born_pct = non_us_born/total_pop)
+```
 
-Add Elk occ on top of urban areas
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(c("co_born_pct", "non_co_born_pct", "non_us_born_pct"),
+              style = "quantile", n = 5,
+              title = c("Colorado Born", "Non-Colorado Born", "Birthplace outside U.S."))+
+  tm_facets(ncol = 3) +
+  tm_layout(frame = FALSE)
+  
+```
 
-elevation + species Occ
+Compare the distribution of occurences by species
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons() +
+tm_shape(occ) +
+  tm_facets(by = "Species") +
+  tm_symbols(col = "Species", palette = c("red", "yellow", "blue"),
+             alpha = 0.5) +
+  tm_layout(legend.show = FALSE)
+  
+```
+
+We can make this interactive!
+
+```{r}
+tmap_mode("view")
+```
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons() +
+tm_shape(occ) +
+  tm_facets(by = "Species", sync = TRUE) +
+  tm_dots(col = "Species", palette = c("red", "yellow", "blue"),
+             alpha = 0.5, size = 0.1, legend.show = FALSE)
+```
 
 ## Animation
 
-Year of species observation
+Let's go back to static plot mode
+
+```{r}
+tmap_mode("plot")
+```
+
+Make an animation of species occurrences over time. Since we have a lot of species data, let's look at just the Elk for this example.
+
+```{r}
+elk_occ <- occ %>% 
+  dplyr::filter(Species == "Elk", !is.na(year))
+```
+
+Can make an animation with `tmap_animation()`. Need to create a tmap object first, then supply that and other animation settings to the function.
+
+```{r}
+m1 <- tm_shape(counties_attr) +
+  tm_polygons() +
+  tm_shape(elk_occ) +
+  tm_symbols(col = "red", alpha = 0.8) +
+  tm_facets(along = "year", free.coords = FALSE, nrow = 1, ncol = 1)
+
+
+```
+
+```{r}
+tmap_animation(m1, width = 1200, height = 600, delay = 80)
+```
+
+```{r}
+elk_21 <- elk_occ %>% 
+  filter(year == 2021)
+
+
+m2 <- tm_shape(counties_attr) +
+  tm_polygons() +
+  tm_shape(elk_21) +
+  tm_symbols(col = "red", alpha = 0.8) +
+  tm_facets(along = "month", free.coords = FALSE, nrow = 1, ncol = 1)
+
+tmap_animation(m2, width = 1200, height = 600, delay = 80)
+```
 
 ## Interactive Mapping
 
-Customization with pop-ups/palettes (elevation/occurrences)
+Let's go back to interactive mode and walk through how to further use and customize interactive maps
+
+```{r}
+tmap_mode("view")
+```
+
+elevation + urban areas + species Occ
+
+Add multiple layers and work with layer control. Read in our elevation and urban areas files
+
+```{r}
+urban <- st_read("data/urban_areas.shp")
+
+elevation <- terra::rast("data/elevation_1km.tif") %>% 
+  terra::project(vect(occ)) %>% 
+  terra::crop(vect(occ))
+```
+
+Put them on a map with species occ.
+
+```{r}
+tm_shape(occ) +
+  tm_dots(col = "Species",
+             size = 0.1,
+             palette = "Dark2",
+             title = "Species Occurrences") +
+tm_shape(urban) +
+  tm_polygons(alpha = 0.7, title = "Urban Areas") +
+tm_shape(elevation) +
+  tm_raster(alpha = 0.8, title = "Elevation (m)")
+```
+
+Pop-ups for species occ
+
+```{r}
+tm_shape(occ) +
+  tm_dots(
+    col = "Species",
+    size = 0.1,
+    palette = "Dark2",
+    title = "Species Occurrences",
+    popup.vars = c("Record Type" = "basisOfRecord",
+                   "Year" = "year",
+                   "Month" = "month",
+                   "Elevation (m)" = "elevation")
+  ) +
+  tm_shape(urban) +
+  tm_polygons(alpha = 0.7, title = "Urban Areas") +
+  tm_shape(elevation) +
+  tm_raster(alpha = 0.8, title = "Elevation (m)")
+```
+
+## More visualization packages to explore
+
+So far used ggplot and tmap extensively. Many others, but wanted to reduce the amount of package installation required for this workshop. tmap is unique because of its breadth of functionality, like static and interactive mapping, annimations, etc. Others worth investigating are mapview and leaflet for itneractive maps, more with ggplot and static maps (additional packages such as ggarrange and gganimate). Plotly for interactive non-spatial plots (one of my favs).
 
 ## Data Sharing
 
@@ -60,3 +361,110 @@ Quick report of plots produced above
 ### Shiny
 
 Make one like in job demo
+
+Shiny is....occurrence
+
+Build off our multi-layer interactive map. Lots of species occurrences, with shiny app can let users interact with data based on attributes they want to view.
+
+Define the UI
+
+```{r}
+ui <- fluidPage(
+  
+  #App title
+  titlePanel("Species of Colorado"),
+  
+  #add some informational text
+  h5(
+    "This map shows occurrence data for multiple Colorado species in relationship to elevation and urban areas."
+  ),
+  h5("In this app you can filter occurrences by species, year of observation, and elevation. You can also click on individual occurrences to view metadata."),
+  
+  sidebarLayout(
+    
+    #sidebar panel for widgets that users can interact with
+    sidebarPanel(
+    
+    #widget to select species shown on map
+    checkboxGroupInput(
+      inputId = "species",
+      label = "Species",
+      choices = list(
+        "Elk", "Yellow-bellied Marmot", "Western Tiger Salamander"
+      ),
+      selected = c("Elk", "Yellow-bellied Marmot", "Western Tiger Salamander")
+    ),
+    
+    #Filter points by year
+    sliderInput(inputId = "year", label = "Year",
+                min = 1800, max = 2022, value = c(1800,2022), sep=""),
+    
+    
+    #filter by elevation
+    sliderInput(inputId = "elevation",
+                label = "Elevation",
+                min = 1000, max = 4500, value = c(1000,4500))
+    
+  ),
+  
+  #put the map in the main panel
+  mainPanel(
+    tmapOutput("map")
+  )
+  
+)
+  
+)
+```
+
+Now server side
+
+```{r}
+server <- function(input, output){
+  
+  # make a reactive object, meaining an object that will change based on user input
+  
+  occ_react <- reactive(
+    occ %>% 
+      filter(Species %in% input$species) %>% 
+      filter(year >= input$year[1] & year <= input$year[2]) %>% 
+      filter(elevation >= input$elevation[1] & 
+             elevation <= input$elevation[2])
+  )
+  
+  #now make a map with reactive occ_react data
+  output$map <- renderTmap({
+    
+    tmap_mode("view")
+    
+    tm_shape(occ_react()) +
+      tm_dots(
+        col = "Species",
+        size = 0.1,
+        palette = "Dark2",
+        title = "Species Occurrences",
+        popup.vars = c(
+          "Record Type" = "basisOfRecord",
+          "Year" = "year",
+          "Month" = "month",
+          "Elevation (m)" = "elevation"
+        )
+      ) +
+      tm_shape(urban) +
+        tm_polygons(alpha = 0.7, title = "Urban Areas") +
+      tm_shape(elevation)+
+        tm_raster(alpha = 0.8, title = "Elevation (m)")
+    
+    
+  })
+  
+
+  
+}
+```
+
+Run the app
+
+```{r}
+shinyApp(ui = ui, server = server)
+```

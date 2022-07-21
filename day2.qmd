@@ -326,7 +326,18 @@ terra::extract(forest_pct, vect(occ))
 ```
 
 ```{r}
-occ$forest_pct <- terra::extract(forest_pct, vect(occ), fun = max)[,2]
+occ$forest_pct <- terra::extract(forest_pct, vect(occ))[,2]
+```
+
+Do the same with elevation (we will be using these values tomorrow)
+
+```{r}
+elevation <- terra::rast("data/elevation_1km.tif") %>% 
+  terra::project(vect(occ))
+```
+
+```{r}
+occ$elevation <- terra::extract(elevation, vect(occ))[,2]
 ```
 
 Now we can do some data frame operations to calculate and comapre average forest cover across species
@@ -438,4 +449,10 @@ Save objects to .RData file that can be loaded back in another session
 
 ```{r}
 save(counties_attr, occ_buffer, occ_larimer, occ, file = "data/objects.RData")
+```
+
+```{r}
+#| echo: false
+# for testing/building content
+save(counties_attr, occ_buffer, occ_larimer, occ, file = "data_test/objects.RData")
 ```
