@@ -7,9 +7,23 @@ format:
 
 ## Set up an R Project
 
-R project
+As a first step whenever you start a new project, workflow, analysis, etc., it is good practice to set up an R project. R Projects are RStudio's way of bundling together all your files for a specific project, such as data, scripts, results, figures. Your project directory also becomes your working directory, so everything is self-contained and easily portable.
 
-Call in libraries
+You can start an R project in an existing directory or in a new one. To create a project go to File -\> New Project:
+
+![](images/paste-050BDFEC.png)
+
+Let's create a new directory and call it 'R-for-Geospatial'. You can make it a sub directory of any folder you wish.
+
+![](images/paste-6F92D857.png)
+
+Now we are working in our R project. You can see the working directory printed at the top of your console is now our project directory, and in the 'Files' tab in RStudio you can see we have an .Rproj file, which will open up this R project in RStudio whenever you come back to it. For example close out of this R session, navigate to the project folder on your computer, and double-click the .Rproj file.
+
+## Read in R packages
+
+Now we have started a fresh R session in our new R project, we need to read in the libraries needed to work through today's lesson. You should have all packages installed after finished the set-up instructions on the [Getting Started](setup.qmd) page.
+
+In the set-up lesson, you used the following function to check if a package is installed, if not install it, and then load that package into your session.
 
 ```{r}
 #| warning: false
@@ -27,9 +41,9 @@ packageLoad <-
 
 ```
 
-We will be using this function the rest of the workshop, so lets store it as its own R script that we can call in later with the `source()` function. Sourcing functions is good practice as it reduces repetitiveness of rewriting them every time you want to use it.
+We will be using this function the rest of the workshop to read in a list of packages at the beginning of each lesson, so lets store it as its own R script that we can call in later with the `source()` function. Sourcing functions is good practice as it reduces repetitiveness of rewriting them every time you want to use it.
 
-Now let's use it to load in our libraries needed for today. Assuming you already installed all of these in the [Getting Started](setup.qmd) page, loading them should run pretty quick.
+Now let's use it to load in our libraries needed for today. Assuming you already installed all of these, loading them should run pretty quick.
 
 ```{r}
 packageLoad(c("rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr", "tidyr", "readr"))
@@ -42,7 +56,7 @@ packageLoad(c("rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr", "tidyr", 
 library(downloadthis)
 ```
 
-Download raster data here after setting up project...
+Today we are going to walk through how to import spatial data directly into R, clean it and save it so we can work with it the rest of the workshop. However, there are some data sets we will be using that are not covered in today's lesson so you will need to download the data to use for Days 2 and 3. Click the download button below, and this will download a zipped folder called 'course-data'. Next, extract all files from the folder, navigating to your project directory. This will then place a folder called 'data' within your project directory with all the data files you need for this workshop.
 
 ```{r}
 #| eval: true
@@ -59,17 +73,37 @@ download_dir(
 )
 ```
 
+We will walk through how most of these data sets were imported and cleaned today, but not all of them are covered. To see how all data sets were created you can check out the \[Pulling Data\] (getdata.qmd) page.
+
 ## Spatial Data Formats
+
+**Vector Data**
+
+-   Locations (points)
+
+    -   Coordinates, address, country, city
+
+-   Shapes (lines or polygons)
+
+    -   Political boundaries, roads, building footprints, water bodies
+
+**Raster Data**
+
+-   Images (matrix of cells organized by rows and columns)
+
+    -   Satellite imagery, climate, landcover, elevation
+
+        ![](images/paste-571C0D9A.png){width="430"}
 
 ## Import and manipulate spatial data
 
-Now we have our project set up, packages loaded, let's get some data to work with! For the first part we are going to import spatial data into R using the `tigris`, `tidycensus`, and `rgbif` packages. The raster data has been pre-processed (see Pulling Data for how that was done in R) and we will read those files in from file.
+Now we have our project set up, packages loaded, and a basic understanding of the spatial data types we will be using. Let's get some data to work with! For the first part we are going to import spatial data into R using the `tigris`, `tidycensus`, and `rgbif` packages. The raster data has been pre-processed (see [Pulling Data](getdata.qmd) for how that was done in R) and we will read those files in from file.
 
 ### Vector Data
 
 #### `tigris`
 
-All the data we are working with in this course is confined to the state of Colorado. Let's start by pulling in political boundaries for Colorado counties with the `tigris` package.
+All the data we are working with in this course is confined to the state of Colorado. Let's start by pulling in political boundaries for Colorado counties with the [`tigris`](https://github.com/walkerke/tigris) package.
 
 ```{r}
 #| message: false
@@ -80,7 +114,7 @@ All the data we are working with in this course is confined to the state of Colo
 counties <- tigris::counties(state = "CO")
 ```
 
-`tigris` has a lot of other available datasets in addition to political boundaries. In this course we are going to work with additional line shape files (rivers and roads) and polygons (urban areas).
+`tigris` has a lot of other available data sets in addition to political boundaries. In this course we are going to work with additional line shape files (rivers and roads) and polygons (urban areas).
 
 Due to the density of rivers and roads in Colorado and therefore large file size, we are going to limit this download to just Larimer County.
 
@@ -92,15 +126,15 @@ roads <- roads(state = "CO", county = "Larimer")
 
 Our object `rivers` actually includes all linear water features in the county, such as streams/rivers, braided streams, canals, ditches, artificial paths, and aqueducts.
 
-`counties` is a spatial polygon dataset, we are going to work with one more polygon dataset which includes the boundaries of individual urban areas and clusters across Colorado. We can explore the `urban_areas()` function from the `tigris` package to get more details on how urban areas are defined.
+`counties` is a spatial polygon data set. We are going to work with one more polygon data set which includes the boundaries of individual urban areas and clusters across Colorado. We can explore the `urban_areas()` function from the `tigris` package to get more details on how urban areas are defined.
 
 ```{r}
 ?urban_areas
 ```
 
-Now let's download the dataset. By default it imports urban areas for all of the U.S., but we just want areas within Colorado. We have to do some data wrangling to filter out just Colorado urban areas. The column "NAME10" has the city and state of each urban area. We can use the `separate()` function from the `tidyr` package to split the "NAME10" column into two separte columns for city and state, and then we can use the `filter()` function to subset just the urban areas in Colorado.
+Now let's download the data set. By default it imports urban areas for all of the U.S., but we just want areas within Colorado. We have to do some data wrangling to filter out just Colorado urban areas. The column "NAME10" has the city and state of each urban area. We can use the `separate()` function from the `tidyr` package to split the "NAME10" column into two separate columns for city and state, and then we can use the `filter()` function to subset just the urban areas in Colorado.
 
-We are also using a new function here, the pipe `%>%` operator. This allows us to run a sequence of operations without having to create intermediate objects that take up unnecessary space in your environment. It can be interpreted as 'and then', taking the output of one function 'and then' running the next function using that output as the input. More on the pipe operator can be found in the R Basics section.
+We are also using a new function here, the pipe `%>%` operator. This allows us to run a sequence of operations without having to create intermediate objects that take up unnecessary space in your environment. It can be interpreted as 'and then', taking the output of one function 'and then' running the next function using that output as the input. We will be using the pipe a lot throughout this workshop.
 
 ```{r}
 urban <- urban_areas() %>% 
@@ -110,9 +144,9 @@ urban <- urban_areas() %>%
 
 #### `tidycensus`
 
-Tidycensus is an R package that allows users to access U.S. Census data, imported as "tidy" data designed to work with tidyverse packages (read more about the Tidyverse in the R Basics section).
+[`tidycensus`](https://walker-data.com/tidycensus/) is an R package that allows users to access U.S. Census data, imported as "tidy" data designed to work with tidyverse packages. The tidyverse is a collection of R packages designed for data manipulation, exploration, and visualization that you are likely to use in every day data analysis. They all use the same design philosophy, grammar, and data structures. When you install the tidyverse, it installs all of these packages, and you can then load all of them in your R session with `library(tidyverse)`. You can learn more about the tidyverse and the packages it includes here: <https://www.tidyverse.org/>.
 
-This package requires the use of an API key to download data. You can obtain an API key for free at <http://api.census.gov/data/key_signup.html>
+The `tidycensus` package requires the use of an API key to download data. You can obtain an API key for free at <http://api.census.gov/data/key_signup.html>
 
 Once you have the API key, you need to run the following line of code before downloading any census data:
 
@@ -154,18 +188,30 @@ census <- census %>%
 
 The last of our spatial data download is species occurrences in the form of point data (latitude/longitude). `rgbif` is a package that allows you to download species occurrences from the [Global Biodiversity Information Facility (GBIF)](https://www.gbif.org/), a database of global species occurrences with over 2.2 billion records.
 
+We are going to pull occurrence data for a couple of charismatic Colorado species:
+
++:----------------------------:+:----------------------------------:+:------------------------------------------:+
+| ![Elk](elk.jpg){width="173"} | ![Marmot](marmot.jpg){width="173"} | ![Salamander](salamander.jpg){width="215"} |
++------------------------------+------------------------------------+--------------------------------------------+
+| Elk                          | Yellow-Bellied Marmot              | Western Tiger Salamander                   |
++------------------------------+------------------------------------+--------------------------------------------+
+
+To pull data for multiple species we are going to run the `occ_data()` function from the `rgbif` package over multiple species using a for loop. For a refresher on for loops see the R Basics page.
+
+We first need to create a string of species scientific names to use in the download function, and a second string with their associated common names.
+
 ```{r}
 #make a string of species names to use in the 'occ_data' function
 species <- c("Cervus canadensis", "Marmota flaviventris", "Ambystoma mavortium")
 
-#also make a string of common names to use for plotting later
+#also make a string of common names
 common_name <- c("Elk", "Yellow-bellied Marmot", "Western Tiger Salamander")
 ```
 
-```{r}
-#write a for loop to extract occurrence data for each species
+Now we are going to write a for loop that iterates across our three species. We first create an empty list that is the length of our species vector that we will fill with each species data download output and bind all the data together outside of the loop.
 
-## #create an empty vector to store each species' downloaded occurrence data
+```{r}
+
 occ <- vector("list", length = length(species)) 
 
 
@@ -178,7 +224,7 @@ for(i in 1:length(occ)){
       geometry = st_bbox(counties),
       limit = 2000
     ) %>%
-    .$data #return just the data frame
+    .$data #return just the data frame. The '.' symbolizes the previous function's output
   
   # add species name column as ID to use later
   occ[[i]]$ID <- common_name[i]
@@ -200,20 +246,38 @@ for(i in 1:length(occ)){
 }
 
 # Bind all data frames together
-occ <- do.call("rbind", occ) 
+occ <- bind_rows(occ)
 ```
 
 ### Raster Data
 
-Quick plot to view raster files
+As mentioned before, we have already processed the raster files and they now exist in the downloaded 'data/' folder as GeoTIFFs. We can read in raster files using the `rast()` function from the `terra` package.
+
+```{r}
+elevation <- terra::rast("data/elevation_1km.tif")
+```
+
+```{r}
+plot(elevation)
+```
 
 ## Coordinate Reference Systems
 
-Check CRS
+Probably the most important part of working with spatial data is the coordinate reference system (CRS) that is used. In order to analyze and visualize spatial data, all objects must be in the exact same CRS.
 
-Project all to match
+We can check a spatial object's CRS by printing it to the console, which will print a bunch of metadata about the object.
+
+```{r}
+elevation
+```
+
+Before we start performing spatial analyses tomorrow we will need to return to the CRS of these spatial objects and make sure they all match. If you need to transform a spatial object to a different CRS you can use the `st_transform()` function from the `sf` package for vector data, and `project()` from the `terra` package for raster data.
 
 ## Saving spatial data
+
+You do not necessarily need to run this part, since the 'data/' folder we downloaded at the beginning of today's lesson contains all these data files we will need for tomorrow. However learning how to write spatial data to file is an important skill.
+
+To save shapefiles, you can use the `st_write()` function from the `sf` package. When running the code below you will likely get an error that the file already exists. If you want to overwrite a file with this function you add `append = FALSE` to the argument.
 
 ```{r}
 st_write(rivers, "data/rivers.shp", append = FALSE) #if the file already exists
@@ -222,6 +286,12 @@ st_write(roads, "data/roads.shp")
 
 st_write(urban, "data/urban_areas.shp")
 
+
+```
+
+We can save point files as a csv with the `write_csv()` function. We will go over tomorrow how to read a csv file with coordinates and convert it into a spatial object.
+
+```{r}
 write_csv(census, "data/census_data.csv")
 
 write_csv(occ, "data/species_occ.csv")
