@@ -7,7 +7,11 @@ format:
 
 # Spatial Data Analysis
 
-Read in packages for today:
+Yesterday you were exposed to spatial data types and various databases you can pull spatial data from. Today we are going to use those data sets to perform a range of spatial analyses.
+
+We briefly used the `sf` and `terra` packages yesterday, but today we will be exploring them much more in depth using a range of spatial operations they provide.
+
+We have to start by reading in the packages we need for today. Some are repeats from yesterday, but we also have a couple new ones. Namely `ggplot2` and `tmap` to do some quick visualizations of our spatial outputs. Tomorrow we will be using these packages for more advanced data visualizations.
 
 ```{r}
 source("packageLoad.R")
@@ -23,14 +27,18 @@ packageLoad(c("dplyr",
 
 ## Distance Calculations
 
-Read in our spatial data.
+We're going to start off today with some distance calculations. Using our species occurrence data, say we want to compare each species average distance to rivers and roads.
+
+First we have to read in the data. Our occurrences were saved as a csv file with lat/long. We can convert a non-spatial object (like a csv file) to a spatial `sf` object using the `st_as_sf()` function, specifying the CRS and lat/long columns.
 
 ```{r}
 occ <- read_csv("data/species_occ.csv") %>% 
   st_as_sf(coords = c("decimalLongitude", "decimalLatitude"), crs = 4326)
 ```
 
-Quick plot with tmap. tmap has both static ("plot" mode) and interactive ("view" mode) options. For exploring data today we are going to make a bunch of quick plots in interactive mode. Once you set the mode with `tmap_mode()`, every plot call to tmap after that produces a plot in that mode.
+Throughout today we are going to be mapping our spatial data to quickly inspect it and get a visual of the data's extent and characteristics.
+
+`tmap` is a great R package for spatial data visualization. It allows for both static ("plot" mode) and interactive ("view" mode) mapping options, which you can set using the function `tmap_mode()` . For today we will be making quick interactive plots. Once you set the mode with `tmap_mode()`, every plot call to `tmap` after that produces a plot in that mode.
 
 ```{r}
 tmap_mode("view")
@@ -43,9 +51,15 @@ tm_shape(occ) +
   tm_symbols(col = "Species", size = 0.5)
 ```
 
-Find out for each species, average distance to rivers and roads. This involves point to line distance calculations, which we can perform with the `sf` package.
+Another way to make a quick map is with `tmap`'s `qtm()` function, which stands for "Quick Thematic Map"
 
-Read in river and roads shapefiles:
+```{r}
+qtm(occ, symbols.col = "Species")
+```
+
+Now, for each species we want to find their average distance to rivers and roads. This involves point to line distance calculations, which we can perform with the `sf` package.
+
+First let's read in our rivers and roads shapefiles. You can read in shapefiles with the `st_read()` function from `sf`, specifying the '.shp' extension, which will work as long as all other accompanying spatial files (.shx, .dpf, .prj) are within the same folder.
 
 ```{r}
 rivers <- st_read("data/rivers.shp")
@@ -53,20 +67,21 @@ rivers <- st_read("data/rivers.shp")
 roads <- st_read("data/roads.shp")
 ```
 
-Before performing any spatial operations, all of our spatial object must be in the same CRS. Our occurrences don't have a set CRS yet, so we will use the `st_crs` function to set the CRS to the same as
+Before performing any spatial operations, all of our spatial objects must be in the same CRS. We can see our spatial objects' CRS when we print the object to the console, or we can get the full CRS details with the `st_crs()` function.
 
 ```{r}
 st_crs(rivers)
 st_crs(roads)
+st_crs(occ)
 ```
 
-Transform occurrences, easier to transform one object instead of two.
+So our line shapefiles are in NAD83 and the occurrences are in WGS84. It generally doesn't matter which CRS you choose to use, but here we are going to transform our occurrences to NAD83 so we only have to transform one object instead of two. Here we use the `st_transform()` function, specifying we want the new CRS for our occurrences to be that of the rivers shapefile.
 
 ```{r}
 occ <- st_transform(occ, crs = st_crs(rivers))
 ```
 
-Also, our occurrence dataset covers all of Colorado, but rivers and roads are only for Larimer County. We have to first filter our points to the extent of the rivers and roads objects. However, the extent of these is a square bounding box, not the exact boundary of Larimer county. We can subset Larimer county from our Colorado counties object, and use `st_filter` to filter points the are found within the Larimer county polygon.
+Also, our occurrence data set covers all of Colorado, but rivers and roads are only for Larimer County. We have to first filter our points to the extent of the rivers and roads objects. However, the extent of these is a square bounding box, not the exact boundary of Larimer County. We can subset Larimer County from our Colorado counties object, and use `st_filter()` to filter points the are found within the Larimer County polygon.
 
 ```{r}
 counties <- st_read("data/CO_counties.shp")
@@ -76,32 +91,66 @@ occ_larimer <- st_filter(occ, counties[counties$NAME == "Larimer",])
 qtm(occ_larimer)
 ```
 
-Calculate distance: https://gis.stackexchange.com/questions/349955/getting-a-new-column-with-distance-to-the-nearest-feature-in-r
+Great, now we just have species occurrences within Larimer County.
 
-Most efficient way, first find for each point the closest line feature. Start with rivers and apply the same methods to roads.
+Now for each point we want to calculate its distance to the nearest river and road. Let's start with rivers and then do the same for roads. The most efficient way is to first find the nearest line feature for each point. We can do this with the `st_nearest_feature()` function.
+
+This function returns the index values (row number) of the river feature in the `rivers` spatial data frame that is closest in distance to each point. Here we are saving these index values in a new column of our Larimer occurrences that we will use later to calculate distances.
 
 ```{r}
 occ_larimer$nearest_river <- st_nearest_feature(occ_larimer, rivers)
 ```
 
-This returns index values (row number) of the river in `rivers` that is closest to each point. Now we can use those index numbers to calculate distance.
+Now, for each point we can use the `st_distance()` function to calculate the distance to the nearest river feature, using the index value in our new "nearest_river" column. Adding `by_element = TRUE` is necessary to tell the function to perform the distance calculations by element (row), which we will fill into a new column "river_dist_m".
 
 ```{r}
 occ_larimer$river_dist_m <- st_distance(occ_larimer, rivers[occ_larimer$nearest_river,], by_element = TRUE)
 ```
 
-Find average distance for each species and plot
+Notice that the new column is more than just a numeric class, but a "units" class, specifying that the values are in meters.
+
+```{r}
+str(occ_larimer)
+```
+
+Cool, now we have the distance to the nearest river (in meters) for each individual species occurrence. Now say we want the average distance for each species. We can do some data wrangling to get these values using the `dplyr()` package. Using the pipe `%>%` operator again, we perform a chain of operations on the data frame. `group_by()` specifies that all following operations should be performed individually by a grouping variable, in this case we want to apply operations on each individual species. Next `summarise()` calculates a new column "river_dist" that is the average (per species) river distance, where we have to convert our 'units' column to numeric to perform the `mean()` function.
+
+```{r}
+#| message: false
+#| warning: false
+occ_larimer %>% 
+  group_by(Species) %>% 
+  summarise(river_dist = (mean(as.numeric(river_dist_m))))
+
+```
+
+Let's make a quick bar plot to visually compare. We can pipe this output into a `ggplot()` object, specifying which variables go on the x and y axes within `aes()` and then we want to fill the bar color by species. `geom_col()` returns a barplot where the heights of the bars represent values in the data (in our case species average distance to a river).
 
 ```{r}
 occ_larimer %>% 
   group_by(Species) %>% 
-  summarise(river_dist = (mean(as.numeric(river_dist_m)))/1000) %>% 
-
+  summarise(river_dist = (mean(as.numeric(river_dist_m)))) %>% 
   ggplot(aes(Species, river_dist, fill = Species)) +
   geom_col()
 ```
 
-No do the same with roads
+A thing to note about `ggplot2` is that it uses `+` instead of `%>%` to add additional elements.
+
+Let's mess around with this plot a little bit further to make it look more aesthetic.
+
+```{r}
+occ_larimer %>% 
+  group_by(Species) %>% 
+  summarise(river_dist = mean(as.numeric(river_dist_m))) %>% 
+  ggplot(aes(Species, river_dist, fill = Species)) +
+  geom_col() +
+  labs(y = "Average distance to nearest river (m)") +
+  theme(legend.position = "none") #removes the legend
+        
+        
+```
+
+Now lets do the same thing, but calculate average distance to the nearest road.
 
 ```{r}
 occ_larimer$nearest_road <- st_nearest_feature(occ_larimer, roads)
@@ -110,18 +159,19 @@ occ_larimer$road_dist_m <- st_distance(occ_larimer, roads[occ_larimer$nearest_ro
 
 occ_larimer %>% 
   group_by(Species) %>% 
-  summarise(road_dist = (mean(as.numeric(road_dist_m)))/1000) %>% 
+  summarise(road_dist = mean(as.numeric(road_dist_m))) %>% 
 
   ggplot(aes(Species, road_dist, fill = Species)) +
   geom_col() +
+  labs(y = "Average distance to nearest road (m)") +
   theme(legend.position = "none")
 ```
 
 ## Buffers
 
-Alternatively, say you want to know what percentage of species' occurrences were found within a certain distance of a river or a road.
+Alternatively, say you want to know what percentage of species' occurrences (points) were found within a certain distance of a river or a road (calculated buffer).
 
-To do this we can add a buffer around our polyline objects and filter the points that fall within that buffer zone. (this takes a while...)
+To do this we could add a buffer around our line features and filter the points that fall within that buffer zone. For this example let's say we are interested in the 100 m buffer zone around rivers and roads. However, if you try this you'll notice this operation takes quite a while.
 
 ```{r}
 #| eval: false
@@ -135,104 +185,113 @@ occ_buffer <- st_buffer(occ_larimer, dist = 100)
 
 ```
 
-Still takes a little bit of run time, but much faster than buffering the polyline shapefile.
+Still takes a little bit of run time, but much faster than buffering each line feature. Our `occ_buffer` object is now a spatial polygon data frame, where each feature is an occurrence buffer with 100 m radius.
 
 ## Spatial Intersect
 
-Use the function `st_intersect` to test for each buffer polygon, does it intersect with a river, and if so it returns an index value for each river feature it intersects. This function returns a list object for each buffer polygon, that will be empty if there are no intersections. We will add this as a column to our buffer dataset, and then create a binary yes/no river intersection column based on those results.
+We can conduct spatial intersect operations using the function `st_intersects()`. This function checks if each individual buffer intersects with a river, and if so it returns an index value (row number) for each river feature it intersects. This function returns a list object for each buffer polygon, that will be empty if there are no intersections. We will add this as a column to our buffer data set, and then create a binary yes/no river intersection column based on those results (is the list empty or not).
 
 ```{r}
 river_intersections <- st_intersects(occ_buffer, rivers)
 ```
 
-Inspect this object.
+If we inspect this object, we see it is a list of the same length as our `occ_buffer` object, where each list element is either empty (no intersections) or a list of index numbers for the river features that do intersect that buffer.
+
+We want to create a new column that returns TRUE/FALSE if the buffer intersects with a river. We do this by testing if the length of each element is greater than 0 (if not the element is empty and returns FALSE since there are no river intersections).
 
 ```{r}
 occ_buffer$river_100m <- lengths(river_intersections) > 0
 ```
 
-Find what percentage of occurrences are within 100m of a river for each species
+Now we can find out what percentage of occurrences are within 100 m of a river for each species using similar `dplyr` operations as before.
 
 ```{r}
 occ_buffer %>% 
-  st_drop_geometry() %>% 
+  st_drop_geometry() %>% #we use this function to treat the object as a dataframe
   group_by(Species) %>% 
   summarise(total_occ = n(), percent_river = (sum(river_100m == TRUE)/total_occ)*100)
 ```
 
-Now lets do another type of intersection. Say we want to know the percent of each county that is defined as 'urban area', using our urban areas polygons.
+Now lets do another type of spatial intersection. Say we want to know what percent of each county is defined as 'urban area', using our urban areas polygons.
+
+Let's read in our urban areas polygon shapefile.
 
 ```{r}
 urban <- st_read("data/urban_areas.shp")
 ```
 
+Now since we are wanting to calculate the actual area of intersection (not just whether or not an intersection exists as before) we can use the `st_intersection()` function.
+
 ```{r}
 urban_intersect <- st_intersection(counties, urban)
 ```
 
-We see that there are more rows than the original data set, meaning some urban areas cross multiple counties.
+This function returns the urban areas polygons as new polygons that intersect within each county, tied to the county information it lies within. We see that there are more rows in this data set than the original counties data set, meaning some urban areas cross multiple counties.
 
-To clean this data to get the results we're interested in (percentage of each county that is covered by urban areas) we will first calculate the area of each urban area, sum the total area per county, and divide that by total county area.
+To clean this data to get the results we're interested in (percentage of each county that is covered by urban areas) we will first calculate the area of each urban area intersection, sum the total intersecting areas per county, and divide that sum by total county area. We are using a new function here from the `dplyr` package, `mutate()`, which creates new columns based on specified values/calculations.
 
 ```{r}
 intersect_area <- urban_intersect %>% 
   mutate(intersect_area = st_area(.)) %>% #create a new column with shape area
-  dplyr::select(NAME, intersect_area) %>%
-  group_by(NAME) %>% 
-  summarise(intersect_area = sum(intersect_area)) %>% 
-  st_drop_geometry()
+  dplyr::select(NAME, intersect_area) %>% #reduce to just county name and intersect area columns
+  group_by(NAME) %>% # group by county
+  summarise(intersect_area = sum(intersect_area)) %>% #new column that sums intersect area per county
+  st_drop_geometry() #drop the geometry to treat as a dataframe
 ```
 
-Join this to our counties shapefile to calculate percent urban area coverage. We are going to create a new counties object called `counties_attr` that we will be adding a lot of other county-level attributes to.
+We return this as a data frame since we just want the intersection area values per county. We can then join this data frame to our counties shapefile to calculate percent urban area coverage. We are going to create a new counties object called `counties_attr` that we will be adding a lot of other county-level attributes to. We are using another new function here `left_join()`, which is a member of `dplyr`'s join functions where in this case the output contains all rows in `x`, the first element, and joins `y`, the second element, by a matching column name/variable, in this case county name.
 
 ```{r}
 counties_attr <- counties %>%
-  mutate(county_area = st_area(.)) %>%
-  left_join(intersect_area, by = "NAME") %>%
-  mutate(urban_coverage = as.numeric(intersect_area / county_area))
+  mutate(county_area = st_area(.)) %>% #calculate county area
+  left_join(intersect_area, by = "NAME") %>% #join county to intersect area data
+  mutate(urban_coverage = as.numeric(intersect_area / county_area)) # calculate a new column that is the proportion of urban area coverage
 ```
 
+Now let's visualize urban coverage by county
+
 ```{r}
-tm_shape(counties_attr) +
-  tm_fill("urban_coverage")
+qtm(counties_attr, fill = "urban_coverage")
   
 ```
 
-```{r}
-tm_shape(counties_attr) +
-  tm_symbols("urban_coverage")
-```
-
-Can also look at total urban area instead of percent of county
+We can also look at total urban area instead of a percentage.
 
 ```{r}
-tm_shape(counties_attr) +
-  tm_fill("intersect_area")
+qtm(counties_attr, fill = "intersect_area")
 ```
 
-Okay, nothing too surprising here...but you learned some cool new tools related to spatial intersections!
+A little more variation here but maybe nothing too exciting if you are familiar with Colorado metro areas. But at least you learned some cool new tools related to spatial intersections!
 
-## Spatial Joins (?)
+## Spatial/Nonspatial Joins
 
-So we have % urban...not much variation though. Lets combine this with our census data.
+We already used this tool a little already, but we can use `left_join()` to add a bunch more attributes to our counties shapefile. First lets add our census data, which was collected at the county level and saved as a csv.
 
 ```{r}
 census <- read_csv("data/census_data.csv") %>% 
   dplyr::select(-NAME)
 ```
 
-Let's join this to our counties dataset. First we want to remove the 'NAME' column, because it is slightly different than the 'NAME' column in counties, and we can join by matching 'GEOID', which is a unique numeric ID given to each county.
+We first want to remove the 'NAME' column, because it is slightly different than the 'NAME' column in our counties data and therefore will not join properly. We can instead join by matching 'GEOID', which is a unique numeric ID given to each county.
 
 ```{r}
 counties_attr <- counties_attr %>% 
   left_join(census, by = "GEOID")
 ```
 
-Lastly, lets see how many species occurrences are in each county
+Lastly, lets join our species occurrence data set. Say we want to know how many species occurrences (at least of our three study species) are found in each county. Here we go back to the `st_intersects()` function we used before, which returns a list of all spatial elements that intersect with the spatial features of interest, in this case how many occurrence points intersect with each county polygon. We then nest this within `lengths()` which will return the number of intersecting features (occurrences) for each county, and we put those values as a new column called "species_count".
 
 ```{r}
 counties_attr$species_count <- lengths(st_intersects(counties_attr, occ))
 ```
+
+Now we have a bunch of information tied to our county shapefile, we can explore it spatially and comparatively.
+
+```{r}
+qtm(counties_attr, fill = "species_count")
+```
+
+Use `ggplot2` to visualize the relationship between different county attributes.
 
 ```{r}
 counties_attr %>% 
@@ -251,13 +310,11 @@ counties_attr %>%
   stat_smooth()
 ```
 
-Do some more plotting with this data tomorrow (multi-layers/symbols). Explore more relationships
-
 ## Raster Reclassification
 
-We've dealt with a bunch of vector data so far, lets work through some raster analysis.
+So far we've dealt with a bunch of vector data and associated analyses with the `sf` package. Now lets work through some raster data analysis using the `terra` package.
 
-Read in our landcover and elevation data. Using the `terra` package for the first time now.
+Lets read in our land cover and elevation raster files. These are files you downloaded yesterday, but were already processed. You can read in a raster file with the `rast()` function from `terra`.
 
 ```{r}
 landcover <- terra::rast("data/NLCD_CO.tif")
@@ -266,19 +323,31 @@ elevation <- terra::rast("data/elevation_1km.tif")
 
 ```
 
-This NLCD dataset assigns landcover names to cells (instead of values).
+```{r}
+qtm(landcover)
+```
+
+This land cover data set includes attributes (land cover classes) associated with raster values. We can quickly view the frequency of each land cover type with the `freq()` function.
 
 ```{r}
 freq(landcover)
 ```
 
-Make a barplot of `freq` of each type.
+Let's view this as a bar chart.
 
-Say we want to explore some habitat characteristics of our species of interest. Specifically, calculate the average percentage of forest cover and urbanization within a 9x9 pixel moving window.
+```{r}
+freq(landcover) %>% 
+  ggplot(aes(reorder(value, count), count)) +
+  labs(x = "") +
+  geom_col() +
+  coord_flip() # switch the axes to better view land cover class names
+```
 
-First lets reclassify our landcover raster, creating two new raster representing just forest/non-forest and urban/non-urban.
+Say we want to explore some habitat characteristics of our species of interest, and we are specifically interested in forest cover. Our first step is to create a new raster layer from our land cover layer representing percent forest cover. This will involve multiple operations, include raster reclassification and focal statistics. Specifically, say we want to calculate the average percentage of forest cover and urbanization within a 9x9 pixel moving window.
 
-Since rasters are technically matrices, we can index and change values using matrix operations. Given this particular raster uses character names instead of values, we index by those names.
+First lets reclassify our land cover raster, creating a new raster representing just forest/non-forest pixels.
+
+Since rasters are technically matrices, we can index and change values using matrix operations. Given this particular raster uses character names associated with values, we can index by those names.
 
 ```{r}
 #first assign landcover to a new object name so we can manipulate it while keeping the origian
@@ -293,25 +362,39 @@ forest[forest %in% c("Deciduous Forest", "Evergreen Forest", "Mixed Forest")] <-
 forest[forest != 1] <- NA
 ```
 
+Lets look at our new forest layer
+
+```{r}
+plot(forest)
+```
+
 ## Focal Statistics
 
-Now perform
+Now we are going to perform focal statistics, which is a spatial operation that calculates new values for each cell based on a specified moving window. For this example we are going to calculate within a 9x9km moving window (since our pixel resolution is 1km). We supply this to the `w =` argument as a matrix, where the first value is the weight of each pixel, and the second two are the number of rows and columns. Second we use the "sum" function, since each forest pixel has a value of 1 we will get the total number of forest pixels within the moving window, and then later divide the values by the total number of pixels in the window (81) to get the percentage. The final raster values will represent for each pixel the surrounding forest percentage (within \~4.5 km radius).
 
 ```{r}
 forest_pct <- terra::focal(forest, w=matrix(1,9,9), fun = "sum", na.rm = TRUE)
 ```
 
-This is just the sum of all pixels within the 9x9km window that were forest. To get the percentage we can perform some raster calculations, dividing by the total number of pixels in the moving window (since our pixel values were 1)
-
 ```{r}
 forest_pct <- forest_pct/81
 ```
 
-Do the same with urban areas?
+```{r}
+plot(forest_pct)
+```
 
-Extract values to points
+Next, we wanted to know the percent forest cover associated with each species occurrence. Since we are now working with multiple spatial objects, we have to first check they are all in the same CRS and if not transform the data before any spatial operations.
 
-Need to project raster first
+```{r}
+crs(forest_pct)
+
+st_crs(occ)
+```
+
+Looks like the raster layer is in a different CRS. Let's reproject this so we can use it with our vector data (which are all in NAD83). We can project raster data to a new CRS with the `project()` function from `terra`.
+
+One thing to note is that while `terra` does work with vector data, it wants them to be in a special format called a `SpatVector` , instead of an `sf` object. Luckily they have made it quick and easy to convert between the data formats using the `vect()` function, so we just need to remember to nest our `sf` objects within that function when using them in `terra` functions.
 
 ```{r}
 forest_pct <- project(forest_pct, vect(occ))
@@ -319,28 +402,33 @@ forest_pct <- project(forest_pct, vect(occ))
 
 ## Raster Extract
 
-See what extract returns first
+Now we can use the `extract()` function to extract the raster pixel value at each occurrence.
 
 ```{r}
 terra::extract(forest_pct, vect(occ))
 ```
 
+Notice that this returns a 2 column data frame, with an ID for each feature (occurrence) and the extracted raster value in the second column. We want to add these raster values as a new column to our occurrence data set, so we need to index just this second column of the `extract()` output.
+
 ```{r}
 occ$forest_pct <- terra::extract(forest_pct, vect(occ))[,2]
 ```
 
-Do the same with elevation (we will be using these values tomorrow)
+Now let's do the same extract method with our elevation raster, pulling the elevation value at each species occurrence.
+
+Again, we need to first project the raster to the CRS of the occurrence data set.
 
 ```{r}
-elevation <- terra::rast("data/elevation_1km.tif") %>% 
-  terra::project(vect(occ))
+elevation <-  terra::project(elevation, vect(occ))
 ```
+
+Now we can do the same extraction as with the forest raster, putting the values in a new 'elevation' column
 
 ```{r}
 occ$elevation <- terra::extract(elevation, vect(occ))[,2]
 ```
 
-Now we can do some data frame operations to calculate and comapre average forest cover across species
+Let's do some data frame operations to calculate and compare average forest cover across species
 
 ```{r}
 occ %>% 
@@ -357,7 +445,7 @@ occ %>%
   theme(legend.position = "bottom")
 ```
 
-Make a boxplot
+Looks like elk are associated with the most forested habitats. We can also view the spread of values with a boxplot.
 
 ```{r}
 ggplot(occ, aes(Species, forest_pct)) +
@@ -365,9 +453,11 @@ ggplot(occ, aes(Species, forest_pct)) +
   
 ```
 
-That's one way to use the `extract` function. We can also extract raster values within polygons, and supply a function to summarize those raster values.
+That's one way to use the `extract()` function. We can also extract raster values within polygons, and supply a function to summarize those raster values.
 
-Say we wanted to know the most common landcover type in each county. We can use `extract` with the function 'modal' to return the most common type for each polygon, and we will add this as a new column.
+Say we wanted to know the most common land cover type in each county. We can use `extract()` with the function 'modal' to return the most common type for each polygon, and we will add this as a new column.
+
+Again we need to project our land cover raster.
 
 ```{r}
 landcover_prj <- project(landcover, vect(counties))
@@ -378,15 +468,13 @@ terra::extract(landcover_prj, vect(counties), fun = "modal")
 
 ```
 
-This works...but we will need to tie the values to their landcover class. This raster behaves such that values are named factors.
-
-We can use the `cats` function
+This works similar to what we ran with the occurrence dataset...however we notice that it returns the raw raster values instead of the names land cover classes (which we want). This raster behaves such that values are named factors, and we can pull this metadata with the `cats()` function.
 
 ```{r}
 cats(landcover)
 ```
 
-This returns a list with a single element that is a data frame with a bunch of information. We just want to keep 'value' and 'NLCD Land Cover Class", and remove all the empty classes. We have to first index the first element of the list to operate on just the data frame, then we can apply some `dplyr` functions
+This returns a single element list that is a data frame with a bunch of information. We just want to keep 'value' and 'NLCD Land Cover Class", and remove all the empty classes. We have to first index the first element of the list to operate on just the data frame, then we can apply some `dplyr` functions.
 
 ```{r}
 nlcd_classes <- cats(landcover)[[1]] %>% 
@@ -394,20 +482,20 @@ nlcd_classes <- cats(landcover)[[1]] %>%
   filter(nlcd_class != "")
 ```
 
-Cool, now we can tie this to our counties data frame once we have the most common landcover value calculated with `extract`
+Cool, now we can tie this to our counties data frame once we have the most common land cover value calculated with `extract`
 
 ```{r}
 counties$common_landcover <- terra::extract(landcover_prj, vect(counties), fun = "modal")[,2]
 ```
 
-Now we can join to the nlcd_classes object by the landcover value
+This join is different from our others because the variable we want to join by has a different column name in each data set, but we can specify this within the `by =` argument like this:
 
 ```{r}
 counties <- counties %>% 
   left_join(nlcd_classes, by = c("common_landcover" = "value"))
 ```
 
-We can get some summary statistics on the most common land cover types
+We can now get some summary statistics on the most common land cover types
 
 ```{r}
 counties %>% 

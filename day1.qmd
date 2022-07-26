@@ -73,7 +73,7 @@ download_dir(
 )
 ```
 
-We will walk through how most of these data sets were imported and cleaned today, but not all of them are covered. To see how all data sets were created you can check out the \[Pulling Data\] (getdata.qmd) page.
+We will walk through how most of these data sets were imported and cleaned today, but not all of them are covered. To see how all data sets were created you can check out the [Pulling Data](getdata.qmd) page.
 
 ## Spatial Data Formats
 
@@ -190,11 +190,10 @@ The last of our spatial data download is species occurrences in the form of poin
 
 We are going to pull occurrence data for a couple of charismatic Colorado species:
 
-+:----------------------------:+:----------------------------------:+:------------------------------------------:+
+|                              |                                    |                                            |
+|:------------------:|:----------------------:|:--------------------------:|
 | ![Elk](elk.jpg){width="173"} | ![Marmot](marmot.jpg){width="173"} | ![Salamander](salamander.jpg){width="215"} |
-+------------------------------+------------------------------------+--------------------------------------------+
-| Elk                          | Yellow-Bellied Marmot              | Western Tiger Salamander                   |
-+------------------------------+------------------------------------+--------------------------------------------+
+|             Elk              |       Yellow-Bellied Marmot        |          Western Tiger Salamander          |
 
 To pull data for multiple species we are going to run the `occ_data()` function from the `rgbif` package over multiple species using a for loop. For a refresher on for loops see the R Basics page.
 
