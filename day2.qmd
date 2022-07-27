@@ -314,7 +314,7 @@ counties_attr %>%
 
 So far we've dealt with a bunch of vector data and associated analyses with the `sf` package. Now lets work through some raster data analysis using the `terra` package.
 
-Lets read in our land cover and elevation raster files. These are files you downloaded yesterday, but were already processed. You can read in a raster file with the `rast()` function from `terra`.
+Lets read in our land cover and elevation raster files. These are files you downloaded yesterday, but were already processed. You can read more about these data sets and how they were processed [here](getdata.qmd). Land cover data comes from the National Land Cover Database (NLCD) and elevation data comes from the AWS Open Data Terrain Tiles. You can read in a raster file with the `rast()` function from `terra`.
 
 ```{r}
 landcover <- terra::rast("data/NLCD_CO.tif")
@@ -445,7 +445,7 @@ occ %>%
   theme(legend.position = "bottom")
 ```
 
-Looks like elk are associated with the most forested habitats. We can also view the spread of values with a boxplot.
+Looks like elk are associated with the most forested habitats. We can also view the spread of values with a box plot.
 
 ```{r}
 ggplot(occ, aes(Species, forest_pct)) +
@@ -468,7 +468,7 @@ terra::extract(landcover_prj, vect(counties), fun = "modal")
 
 ```
 
-This works similar to what we ran with the occurrence dataset...however we notice that it returns the raw raster values instead of the names land cover classes (which we want). This raster behaves such that values are named factors, and we can pull this metadata with the `cats()` function.
+This works similar to what we ran with the occurrence dataset...however we notice that it returns the raw raster values instead of the named land cover classes (which we want). This raster behaves such that values are named factors, and we can pull this metadata with the `cats()` function.
 
 ```{r}
 cats(landcover)
@@ -495,7 +495,7 @@ counties <- counties %>%
   left_join(nlcd_classes, by = c("common_landcover" = "value"))
 ```
 
-We can now get some summary statistics on the most common land cover types
+We can now get some summary statistics on the most common land cover types per county.
 
 ```{r}
 counties %>% 
@@ -508,7 +508,7 @@ counties %>%
   coord_flip()
 ```
 
-Map it out by county
+And map it out by county:
 
 ```{r}
 tm_shape(counties)+
@@ -517,23 +517,18 @@ tm_shape(counties)+
 
 ## Save Data
 
-Save `counties_attr` and update occ?
+We've added new columns to some of our data frames and created new ones. Let's save these objects so we can use them tomorrow without having to re-run all this code.
 
-Before writing to file, let's get rid of some of the extra columns we don't need.
+Yesterday we learned how to save shapefiles with `st_write()`. Another way to save data in R is by saving them as R objects, which is beneficial as it reduces file size. You can save individual R objects as .Rds files, or multiple R objects as .RData files. Since we have multiple objects we want to save and load back into our environment tomorrow, we will write them to a single .RData file.
+
+Before writing to file, let's get rid of some of the extra columns we don't need. `counties_attr` is one of the main objects we will be using for visualizations tomorrow. Here we can de-select a range of columns by putting a `-` in front.
 
 ```{r}
 counties_attr <- counties_attr %>% 
   dplyr::select(-c(NAMELSAD:INTPTLON))
 ```
 
-```{r}
-#| eval: false
-st_write(counties_attr, "data/counties_attr.shp", append = FALSE)
-```
-
-When writing spatial files the column names get abbreviated (removes vowels). Could save as R object instead?
-
-Save objects to .RData file that can be loaded back in another session
+Now we use the `save()` function, listing all the objects in our current environment that we want to save, and the file name and location with the .RData extension.
 
 ```{r}
 save(counties_attr, occ_buffer, occ_larimer, occ, file = "data/objects.RData")
@@ -544,3 +539,5 @@ save(counties_attr, occ_buffer, occ_larimer, occ, file = "data/objects.RData")
 # for testing/building content
 save(counties_attr, occ_buffer, occ_larimer, occ, file = "data_test/objects.RData")
 ```
+
+We will start tomorrow's lesson by reading these objects back into our environment (so you can close out of this R Studio session at the end of the day if you want).

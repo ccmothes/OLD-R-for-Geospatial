@@ -9,12 +9,12 @@ format:
 
 We did some basic plotting yesterday to view the results of our spatial analyses. Today we will be working with some more advanced mapping techniques, plotting multiple spatial layers together, and learn how to make these interactive and ways to share data and visualizations with others.
 
-Prep the libraries for today. Load in our `packageLoad()` function that we have now saved as a scripts. You can run other scripts using the `source()` function.
+First we need to call in the packages needed for today's lesson. Load in our `packageLoad()` function that we have now saved as a script. You can run other scripts using the `source()` function.
 
 ```{r}
 source("packageLoad.R")
 
-packageLoad(c("tmap", ""))
+packageLoad(c("tmap", "ggplot2", "shiny"))
 ```
 
 Read in data from yesterday. Since we save these are R objects in an `.RData` format, we load those objects back into the session with `load()`.
@@ -22,7 +22,7 @@ Read in data from yesterday. Since we save these are R objects in an `.RData` fo
 Note that if we saved a `.RData` file in the main project directory, these objects would load in the environment every time you open a new session. This is related to the question you may get every time you close out of R Studio that says "Do you want to save your workspace". It is best practice to always say no (you can set this in your global options) otherwise you will be saving your entire R environment every time which likely consists of too much extra data you don't need. Here we are saving the objects we know we will use again and that had required quite a bit of code to create them.
 
 ```{r}
-load("data/objects.RData") #path to the .RData file,
+load("data/objects.RData") #path to the .RData file
 ```
 
 ```{r}
