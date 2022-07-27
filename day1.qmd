@@ -168,11 +168,11 @@ We can get the full list of available variables with the `load_variables()` func
 load_variables(2019, "acs5") %>% View()
 ```
 
-We are going to download total population, total born in their state of residence, total born in another U.S. state outside of their residence, and total born outside the U.S. We use the `get_acs()` function and specify we want this data at the county level for the state of Colorado and supply a string of the variables we want, using the variable ID.
+We are going to download total population and median household income. We use the `get_acs()` function and specify we want this data at the county level for the state of Colorado and supply a string of the variables we want, using the variable ID.
 
 ```{r}
 census <- get_acs(geography = "county", state = "CO", year = 2019,
-                  variables = c("B01003_001", "B06001_013", "B06001_025", "B06001_049"), output = "wide")
+                  variables = c("B01003_001", "B19013_001"), output = "wide")
 ```
 
 Let's clean this up a bit. E stands for estimate and M is margin of error. For our purposes we are only looking at the estimate values, so lets remove the other columns and rename the ones we keep with more informative titles.
@@ -180,8 +180,7 @@ Let's clean this up a bit. E stands for estimate and M is margin of error. For o
 ```{r}
 census <- census %>% 
   dplyr::select(contains("E")) %>% 
-  rename(total_pop = B01003_001E, co_born = B06001_013E, non_co_born = B06001_025E,
-         non_us_born = B06001_049E)
+  rename(total_pop = B01003_001E, med_income = B19013_001E)
 ```
 
 #### `rgbif`

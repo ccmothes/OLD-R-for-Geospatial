@@ -6,7 +6,11 @@ This is the set-up page for the **R for Geospatial** workshop. You ***must*** co
 
 ## Install R and RStudio
 
-*Check R version required for all necessary packages !!!*
+**R** is an open source language and software environment for statistical analysis and graphics (plus so much more!). You must first download the R software (for free) here: <https://www.r-project.org/>.
+
+*Note: If you already have R installed, we recommend that you have at least version 4.0.0. or greater. At minimum you will need R version \> 3.5.0 to use the required packages.*
+
+**RStudio** is a (also free) R Integrated Development Environment (IDE) that provides a built-in editor and other advantages such as version control and project management. Once you have the R software installed on your computer, you can install RStudio Desktop here: [https://www.rstudio.com/products/rstudio/.](https://www.rstudio.com/products/rstudio/)
 
 ## Package Installation
 
@@ -14,42 +18,12 @@ While the R software comes with many pre-loaded functions (referred to as 'base 
 
 The packages we are using for this workshop are listed below:
 
-Package list:
-
-Data retrieval
-
--   tidycensus
-
--   tigris
-
--   rgbif (maybe, if include this part in the lesson)
-
-Processing spatial data
-
--   sf
-
--   terra
-
-Data wrangling
-
--   dplyr
-
--   tidyr (maybe stringr instead?)
-
--   readr (reading and writing tabular data)
-
-Data vizualization
-
--   ggplot2
-
--   gganimate (maybe with species occurrence data)
-
--   tmap
-
--   leaflet (maybe)
-
-Sharing Data
-
--   Rmarkdown
-
--   shiny
++:-------------------------------------------------------------------:+:--------------------------------------------------------:+:-------------------------------------------:+:-----------------------------------------------:+:-------------------------------------------------:+
+| **Data Retrieval**                                                  | **Processing Spatial Data**                              | **Data Wrangling**                          | **Data Visualization**                          | **Sharing Data**                                  |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------+-------------------------------------------------+---------------------------------------------------+
+| -   [`tidycensus`](https://walker-data.com/tidycensus/)             | -   [`sf`](https://r-spatial.github.io/sf/)              | -   [`dplyr`](https://dplyr.tidyverse.org/) | -   [`ggplot2`](https://ggplot2.tidyverse.org/) | -   [`rmarkdown`](https://rmarkdown.rstudio.com/) |
+|                                                                     |                                                          |                                             |                                                 |                                                   |
+| -   [`tigris`](https://github.com/walkerke/tigris)                  | -   [`terra`](https://rspatial.org/terra/pkg/index.html) | -   [`tidyr`](https://tidyr.tidyverse.org/) | -   [`tmap`](https://r-tmap.github.io/tmap/)    | -   [`shiny`](https://shiny.rstudio.com/)         |
+|                                                                     |                                                          |                                             |                                                 |                                                   |
+| -   [`rgbif`](https://docs.ropensci.org/rgbif/articles/rgbif.html)  |                                                          | -   [`readr`](https://readr.tidyverse.org/) |                                                 |                                                   |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------+-------------------------------------------------+---------------------------------------------------+

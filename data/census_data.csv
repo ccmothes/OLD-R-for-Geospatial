@@ -1,65 +1,65 @@
-GEOID,NAME,total_pop,co_born,non_co_born,non_us_born
-08095,"Phillips County, Colorado",4290,2465,1217,603
-08007,"Archuleta County, Colorado",13253,3813,8681,663
-08031,"Denver County, Colorado",705576,281808,306735,105658
-08061,"Kiowa County, Colorado",1489,916,559,9
-08055,"Huerfano County, Colorado",6679,3713,2795,155
-08009,"Baca County, Colorado",3561,1840,1594,115
-08047,"Gilpin County, Colorado",6018,1589,4093,276
-08063,"Kit Carson County, Colorado",7447,4486,2388,557
-08051,"Gunnison County, Colorado",16802,6604,9142,637
-08079,"Mineral County, Colorado",824,285,528,11
-08091,"Ouray County, Colorado",4796,1311,3358,81
-08115,"Sedgwick County, Colorado",2322,1345,900,68
-08123,"Weld County, Colorado",305345,162378,113140,26662
-08027,"Custer County, Colorado",4776,1741,2806,149
-08023,"Costilla County, Colorado",3745,2153,1221,345
-08035,"Douglas County, Colorado",336041,124839,181035,25659
-08065,"Lake County, Colorado",7751,2934,3923,728
-08067,"La Plata County, Colorado",55617,20452,33025,1507
-08097,"Pitkin County, Colorado",17926,4572,10548,2579
-08105,"Rio Grande County, Colorado",11305,6879,3809,468
-08011,"Bent County, Colorado",5787,3455,2025,268
-08025,"Crowley County, Colorado",5754,3518,1918,198
-08111,"San Juan County, Colorado",589,179,383,17
-08069,"Larimer County, Colorado",344786,137932,183502,19284
-08075,"Logan County, Colorado",22380,13288,7882,1004
-08113,"San Miguel County, Colorado",8049,2061,5042,852
-08119,"Teller County, Colorado",24524,6712,16354,802
-08039,"Elbert County, Colorado",25717,11851,12961,702
-08071,"Las Animas County, Colorado",14266,7718,5619,763
-08073,"Lincoln County, Colorado",5585,3337,1973,244
-08117,"Summit County, Colorado",30649,8629,18184,3497
-08003,"Alamosa County, Colorado",16107,9706,4773,1464
-08029,"Delta County, Colorado",30565,16122,12587,1416
-08043,"Fremont County, Colorado",47321,20744,24777,1263
-08085,"Montrose County, Colorado",41686,20095,18043,3228
-08087,"Morgan County, Colorado",28517,15681,8107,4426
-08109,"Saguache County, Colorado",6592,3015,2879,661
-08099,"Prowers County, Colorado",12022,7286,3408,1234
-08121,"Washington County, Colorado",4868,3196,1505,134
-08049,"Grand County, Colorado",15303,6132,8151,831
-08089,"Otero County, Colorado",18282,11954,5291,917
-08014,"Broomfield County, Colorado",67886,26553,34368,6055
-08053,"Hinsdale County, Colorado",857,203,639,12
-08033,"Dolores County, Colorado",1857,842,951,22
-08057,"Jackson County, Colorado",1261,557,632,72
-08083,"Montezuma County, Colorado",26031,11190,13915,753
-08013,"Boulder County, Colorado",322510,101120,181658,34394
-08125,"Yuma County, Colorado",10003,6132,2640,1206
-08107,"Routt County, Colorado",25072,8815,14582,1265
-08019,"Clear Creek County, Colorado",9495,3620,5407,213
-08101,"Pueblo County, Colorado",165982,107664,51675,4909
-08093,"Park County, Colorado",17867,6153,11205,426
-08077,"Mesa County, Colorado",151218,74184,69512,6252
-08041,"El Paso County, Colorado",698974,222069,405225,48798
-08005,"Arapahoe County, Colorado",644560,265009,270938,97566
-08015,"Chaffee County, Colorado",19557,7919,10424,739
-08045,"Garfield County, Colorado",59055,25143,24543,8712
-08059,"Jefferson County, Colorado",574798,264423,266811,36804
-08103,"Rio Blanco County, Colorado",6384,3400,2749,189
-08021,"Conejos County, Colorado",8128,6356,1567,143
-08001,"Adams County, Colorado",504108,261804,158428,77166
-08037,"Eagle County, Colorado",54681,17928,26288,9592
-08081,"Moffat County, Colorado",13127,6834,5358,907
-08017,"Cheyenne County, Colorado",2026,1409,422,183
+GEOID,NAME,total_pop,med_income
+08095,"Phillips County, Colorado",4290,51155
+08007,"Archuleta County, Colorado",13253,52221
+08031,"Denver County, Colorado",705576,68592
+08061,"Kiowa County, Colorado",1489,41731
+08055,"Huerfano County, Colorado",6679,38137
+08009,"Baca County, Colorado",3561,35878
+08047,"Gilpin County, Colorado",6018,76429
+08063,"Kit Carson County, Colorado",7447,49349
+08051,"Gunnison County, Colorado",16802,56577
+08079,"Mineral County, Colorado",824,62188
+08091,"Ouray County, Colorado",4796,66417
+08115,"Sedgwick County, Colorado",2322,43150
+08123,"Weld County, Colorado",305345,74150
+08027,"Custer County, Colorado",4776,53119
+08023,"Costilla County, Colorado",3745,30965
+08035,"Douglas County, Colorado",336041,119730
+08065,"Lake County, Colorado",7751,50565
+08067,"La Plata County, Colorado",55617,68685
+08097,"Pitkin County, Colorado",17926,78935
+08105,"Rio Grande County, Colorado",11305,39123
+08011,"Bent County, Colorado",5787,30900
+08025,"Crowley County, Colorado",5754,42135
+08111,"San Juan County, Colorado",589,54625
+08069,"Larimer County, Colorado",344786,71881
+08075,"Logan County, Colorado",22380,53318
+08113,"San Miguel County, Colorado",8049,67038
+08119,"Teller County, Colorado",24524,66592
+08039,"Elbert County, Colorado",25717,99199
+08071,"Las Animas County, Colorado",14266,41817
+08073,"Lincoln County, Colorado",5585,47258
+08117,"Summit County, Colorado",30649,79277
+08003,"Alamosa County, Colorado",16107,37515
+08029,"Delta County, Colorado",30565,45269
+08043,"Fremont County, Colorado",47321,49409
+08085,"Montrose County, Colorado",41686,50489
+08087,"Morgan County, Colorado",28517,53682
+08109,"Saguache County, Colorado",6592,38571
+08099,"Prowers County, Colorado",12022,41929
+08121,"Washington County, Colorado",4868,50094
+08049,"Grand County, Colorado",15303,71198
+08089,"Otero County, Colorado",18282,38169
+08014,"Broomfield County, Colorado",67886,96416
+08053,"Hinsdale County, Colorado",857,56339
+08033,"Dolores County, Colorado",1857,45972
+08057,"Jackson County, Colorado",1261,53300
+08083,"Montezuma County, Colorado",26031,49470
+08013,"Boulder County, Colorado",322510,83019
+08125,"Yuma County, Colorado",10003,52022
+08107,"Routt County, Colorado",25072,77443
+08019,"Clear Creek County, Colorado",9495,67060
+08101,"Pueblo County, Colorado",165982,46783
+08093,"Park County, Colorado",17867,73622
+08077,"Mesa County, Colorado",151218,55379
+08041,"El Paso County, Colorado",698974,68779
+08005,"Arapahoe County, Colorado",644560,77469
+08015,"Chaffee County, Colorado",19557,55771
+08045,"Garfield County, Colorado",59055,75937
+08059,"Jefferson County, Colorado",574798,82986
+08103,"Rio Blanco County, Colorado",6384,54357
+08021,"Conejos County, Colorado",8128,36084
+08001,"Adams County, Colorado",504108,71202
+08037,"Eagle County, Colorado",54681,84790
+08081,"Moffat County, Colorado",13127,57229
+08017,"Cheyenne County, Colorado",2026,53977
