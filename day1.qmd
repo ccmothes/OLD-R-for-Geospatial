@@ -64,7 +64,7 @@ Today we are going to walk through how to import spatial data directly into R, c
 #| message: false
 
 download_dir(
-  path = "data",
+  path = paste0(getwd(), "/data"),
   output_name = "course-data",
   button_label = "Download Data",
   button_type = "success",
