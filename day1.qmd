@@ -190,7 +190,7 @@ The last of our spatial data download is species occurrences in the form of poin
 We are going to pull occurrence data for a couple of charismatic Colorado species:
 
 |                              |                                    |                                            |
-|:----------------------------:|:----------------------------------:|:------------------------------------------:|
+|:------------------:|:----------------------:|:---------------------------:|
 | ![Elk](elk.jpg){width="173"} | ![Marmot](marmot.jpg){width="173"} | ![Salamander](salamander.jpg){width="215"} |
 |             Elk              |       Yellow-Bellied Marmot        |          Western Tiger Salamander          |
 

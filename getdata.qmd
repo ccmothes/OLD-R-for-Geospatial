@@ -84,11 +84,11 @@ terra::writeRaster(land_co1km, filename = "data/NLCD_CO.tif", overwrite = TRUE)
 
 We will be working with some species occurrences in the form of point data (latitude/longitude). `rgbif` is a package that allows you to download species occurrences from the [Global Biodiversity Information Facility (GBIF)](https://www.gbif.org/), a database of global species occurrences with over 2.2 billion records.
 
-+-------------------------------------------------------------------------------------------------------------------+:-------------------------------------------:+:------------------------------------------------------------------:+
-| ![Elk; Photo Credit Caitlin Mothes](elk.jpg){alt="Elk; Photo Credit Caitlin Mothes" fig-align="left" width="243"} | ![Test](marmot.jpg){alt="Test" width="396"} | ![]()                                                              |
-|                                                                                                                   |                                             |                                                                    |
-|                                                                                                                   |                                             | ![Test](salamander.jpg){alt="Test" fig-align="center" width="235"} |
-+-------------------------------------------------------------------------------------------------------------------+---------------------------------------------+--------------------------------------------------------------------+
++------------------+-----------------------+---------------------------+
+|                  |                       |                           |
++:================:+:=====================:+:=========================:+
+| Elk              | Yellow-Bellied Marmot | Western Tiger Salamander  |
++------------------+-----------------------+---------------------------+
 
 ```{r}
 #make a string of species names to use in the 'occ_data' function
@@ -166,4 +166,14 @@ urban <- urban_areas() %>%
 
 ## Other Data Libraries
 
-R's collection of data retrieval libraries is extensive. We only use a few of them in this workshop, but I wanted to mention a few other packages that may be of interest
+R's collection of data retrieval libraries is extensive. We only use a few of them in this workshop, but I wanted to mention a few other packages that may be of interest:
+
+|                                                                                                       |                                                                                                                                         |
+|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
+| [`rnaturalearth`](https://docs.ropensci.org/rnaturalearth/articles/rnaturalearth.html)                | Natural Earth spatial data                                                                                                              |
+| [`rnoaa`](https://docs.ropensci.org/rnoaa/articles/rnoaa.html)                                        | NOAA weather data                                                                                                                       |
+| [`dataRetrieval`](https://cran.r-project.org/web/packages/dataRetrieval/vignettes/dataRetrieval.html) | USGS water data                                                                                                                         |
+| [`wdpar`](https://cran.r-project.org/web/packages/wdpar/vignettes/wdpar.html)                         | World Database on Protected Areas                                                                                                       |
+| [`rgee`](https://github.com/r-spatial/rgee)                                                           | use Google Earth Engine (and connect to the entire data collection) in R                                                                |
+| [`nhdplusTools`](https://usgs-r.github.io/nhdplusTools/)                                              | Hydrographic data                                                                                                                       |
+| [`FedData`](https://github.com/ropensci/FedData)                                                      | Spatial data from several U.S. federal data sources, such as elevation, hydrography, soil, land cover, cropland, and climate data sets. |

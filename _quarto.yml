@@ -18,16 +18,18 @@ website:
         href: index.qmd
       - text: "Getting Started"
         href: setup.qmd
-      - text: "Day 1"
+      - text: "Lesson 1"
         href: day1.qmd
-      - text: "Day 2"
+      - text: "Lesson 2"
         href: day2.qmd
-      - text: "Day 3"
+      - text: "Lesson 3"
         href: day3.qmd
       - section: "Extras"
         contents:
             - text: "Pulling Data"
               href: getdata.qmd
+            - text: "R Basics"
+              href: basics.qmd
 
    
   page-footer: 
