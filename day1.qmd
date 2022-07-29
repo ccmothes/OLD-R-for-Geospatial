@@ -1,5 +1,5 @@
 ---
-title: "Day 1"
+title: "Lesson 1"
 format: 
   html:
     eval: false
@@ -21,14 +21,12 @@ Now we are working in our R project. You can see the working directory printed a
 
 ## Read in R packages
 
-Now we have started a fresh R session in our new R project, we need to read in the libraries needed to work through today's lesson. You should have all packages installed after finished the set-up instructions on the [Getting Started](setup.qmd) page.
+Now we have started a fresh R session in our new R project, we need to read in the libraries needed to work through today's lesson. You should have all packages installed after finishing the set-up instructions on the [Getting Started](setup.qmd) page.
 
 In the set-up lesson, you used the following function to check if a package is installed, if not install it, and then load that package into your session.
 
 ```{r}
-#| warning: false
-#| message: false
-#| 
+
 packageLoad <-
   function(x) {
     for (i in 1:length(x)) {
@@ -56,7 +54,7 @@ packageLoad(c("rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr", "tidyr", 
 library(downloadthis)
 ```
 
-Today we are going to walk through how to import spatial data directly into R, clean it and save it so we can work with it the rest of the workshop. However, there are some data sets we will be using that are not covered in today's lesson so you will need to download the data to use for Days 2 and 3. Click the download button below, and this will download a zipped folder called 'course-data'. Next, extract all files from the folder, navigating to your project directory. This will then place a folder called 'data' within your project directory with all the data files you need for this workshop.
+Today we are going to walk through how to import spatial data directly into R, clean it, and save it so we can work with it the rest of the workshop. However, there are some data sets we will be using that are not covered in today's lesson so you will need to download the data to use for Lessons 2 and 3. Click the download button below, and this will download a zipped folder called 'course-data'. Next, extract all files from the folder, navigating to your project directory. This will then place a folder called 'data' within your project directory with all the data files you need for this workshop.
 
 ```{r}
 #| eval: true
@@ -73,7 +71,7 @@ download_dir(
 )
 ```
 
-We will walk through how most of these data sets were imported and cleaned today, but not all of them are covered. To see how all data sets were created you can check out the [Pulling Data](getdata.qmd) page.
+We will work through how most of these data sets were imported and cleaned today, but not all of them are covered. To see how all data sets were created you can check out the [Pulling Data](getdata.qmd) page.
 
 ## Spatial Data Formats
 
@@ -190,7 +188,7 @@ The last of our spatial data download is species occurrences in the form of poin
 We are going to pull occurrence data for a couple of charismatic Colorado species:
 
 |                              |                                    |                                            |
-|:------------------:|:----------------------:|:---------------------------:|
+|:------------------:|:----------------------:|:--------------------------:|
 | ![Elk](elk.jpg){width="173"} | ![Marmot](marmot.jpg){width="173"} | ![Salamander](salamander.jpg){width="215"} |
 |             Elk              |       Yellow-Bellied Marmot        |          Western Tiger Salamander          |
 

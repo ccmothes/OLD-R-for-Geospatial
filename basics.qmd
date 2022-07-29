@@ -7,7 +7,7 @@ editor: visual
 
 When you first open RStudio, it is split into 3 panels:
 
--   **The Console** (left), where you can directly type and run code
+-   **The Console** (left), where you can directly type and run code (by hitting Enter)
 -   **The Environment/History pane** (upper-right), where you can view the objects you currently have stored in your environment and a history of the code you've run
 -   **The Files/Plots/Packages/Help pane** (lower-right), where you can search for files, view and save your plots, view and manage what packages are loaded in your library and session, and get R help
 
@@ -42,18 +42,18 @@ paste("Hello", "World")
 
 ### Packages
 
-R Packages include reusable functions that are not built-in with R. To use these functions, you must install the package to your local system with the `install.packages` function. Once a package is installed on your computer you don't need to install it again. Anytime you want to use the package in a new R session you just load it with the `library` function. Go to the [Getting Started](setup.qmd) page to walk through installing and loading the R packages needed for this workshop.
+R Packages include reusable functions that are not built-in with R. To use these functions, you must install the package to your local system with the `install.packages()` function. Once a package is installed on your computer you don't need to install it again. Anytime you want to use the package in a new R session you just load it with the `library()` function. Go to the [Getting Started](setup.qmd) page to walk through installing and loading the R packages needed for this workshop.
 
 #### The Tidyverse
 
-You may hear the word "tidy" a lot throughout this workshop, which is referring to the **Tidyverse**. The **Tidyverse** is a collection of R packages designed for data manipulation, exploration, and visualization that you are likely to use in every day data analysis. They all use the same design philosophy, grammar, and data structures. When you install the Tidyverse, it installs all of these packages, and you can then load all of them in your R session with `library(tidyverse)`. For this course, we are using Tidyverse packages `dplyr`, `tidyr`, and `readr` and installing them individually instead of the entire Tidyverse suite of packages. You can learn more about the Tidyverse and the packages it includes here: <https://www.tidyverse.org/>.
+You may hear the word "tidy" a lot throughout this workshop, which is referring to the **Tidyverse**. The Tidyverse is a collection of R packages designed for data manipulation, exploration, and visualization that you are likely to use in every day data analysis. They all use the same design philosophy, grammar, and data structures. When you install the Tidyverse, it installs all of these packages, and you can then load all of them in your R session with `library(tidyverse)`. For this course, we are using Tidyverse packages `dplyr`, `tidyr`, and `readr` and installing them individually instead of the entire Tidyverse suite of packages. You can learn more about the Tidyverse and the packages it includes here: <https://www.tidyverse.org/>.
 
 ### Further Reading
 
-If you are brand new to R (or even if you have some experience) you should also read through these beginner resources:
+If you are brand new to R (or even if you have some experience) we highly recommend you read through these beginner resources:
 
 **Hands on Programming with R by Garrett Grolemund: [The Very Basics](https://jjallaire.github.io/hopr/basics.html)**. This covers getting started with RStudio, executing code from the console, writing functions, and working with scripts.
 
-**Spatial Data Science with applications in R by Edzer Pebesma & Roger Bivand: [R Basics](https://keen-swartz-3146c4.netlify.app/r-basics.html#r-basics).** This covers pipes (which we will use a lot in this workshop), data structure, and how to dissect the different parts and structure of spatial data in R.
+**Spatial Data Science with applications in R by Edzer Pebesma & Roger Bivand: [R Basics](https://keen-swartz-3146c4.netlify.app/r-basics.html#r-basics).** This covers pipes (which we will use a lot in this workshop), data structures, and how to dissect the different parts and structure of spatial data in R.
 
 Both of the above lessons cover beginner material that will be relevant for this workshop.

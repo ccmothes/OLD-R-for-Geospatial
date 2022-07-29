@@ -5,7 +5,7 @@ format:
     eval: false
 ---
 
-Below is the code used to import all datasets used for this workshop. There are tons of R packages that allow you to connect to open-source spatial databases and pull spatial data right into your R session (without having to download and read in the data separately). Some packages require an API key before importing the data, which are free to sign up for.
+Below is the code used to import all data sets used for this workshop. There are tons of R packages that allow you to connect to open-source spatial databases and pull spatial data right into your R session (without having to download and read in the data separately). Some packages require an API key before importing the data, which are free to sign up for.
 
 ## Load in Libraries
 

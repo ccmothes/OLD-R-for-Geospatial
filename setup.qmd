@@ -4,15 +4,15 @@ title: "Getting Started"
 
 This is the set-up page for the **R for Geospatial** workshop. You ***must*** complete all steps on this page before the first day of the workshop. If you have any issues, we will have set-up hours 30 minutes before the start of Lesson 1, or you can email ccmothes\@colostate.edu beforehand.
 
-This course is also designed for individuals with a basic understanding of R and R Studio. **If you are new to R/RStudio, please read through the [R Basics](basics.qmd) page.** Even if you do have experience with R, this page is a good refresher before diving into this course content.
+This course is also designed for individuals with a basic understanding of R and RStudio. **If you are new to R/RStudio, please read through the [R Basics](basics.qmd) page.** Even if you do have experience with R, this page is a good refresher before diving into this course content.
 
 ## Install R and RStudio
 
-**R** is an open source language and software environment for statistical analysis and graphics (plus so much more!). You must first download the R software (for free) here: <https://www.r-project.org/>.
+**R** is an open source language and software environment for statistical analysis and graphics (plus so much more!). You must **first download the R software (for free) here: <https://www.r-project.org/>.**
 
 *Note: If you already have R installed, we recommend that you have at least version 4.0.0. or greater. At minimum you will need R version \> 3.5.0 to use the required packages.*
 
-**RStudio** is a (also free) R Integrated Development Environment (IDE) that provides a built-in editor and other advantages such as version control and project management. Once you have the R software installed on your computer, you can install RStudio Desktop here: [https://www.rstudio.com/products/rstudio/.](https://www.rstudio.com/products/rstudio/)
+**RStudio** is a (also free) R Integrated Development Environment (IDE) that provides a built-in editor and other advantages such as version control and project management. **Once you have the R software installed on your computer, you can install RStudio Desktop here: [https://www.rstudio.com/products/rstudio/.](https://www.rstudio.com/products/rstudio/)**
 
 ## Package Installation
 
@@ -20,17 +20,17 @@ While the R software comes with many pre-loaded functions (referred to as 'base 
 
 The packages we are using for this workshop are listed below, and you can read more about them by clicking on the hyperlink:
 
-+:--------------------------------------------------------------:+:----------------------------------------------------:+:---------------------------------------:+:-------------------------------------------:+:---------------------------------------------:+
-| **Data Retrieval**                                             | **Processing Spatial Data**                          | **Data Wrangling**                      | **Data Visualization**                      | **Sharing Data**                              |
-+----------------------------------------------------------------+------------------------------------------------------+-----------------------------------------+---------------------------------------------+-----------------------------------------------+
-| [`tidycensus`](https://walker-data.com/tidycensus/)            | [`sf`](https://r-spatial.github.io/sf/)              | [`dplyr`](https://dplyr.tidyverse.org/) | [`ggplot2`](https://ggplot2.tidyverse.org/) | [`rmarkdown`](https://rmarkdown.rstudio.com/) |
-|                                                                |                                                      |                                         |                                             |                                               |
-| [`tigris`](https://github.com/walkerke/tigris)                 | [`terra`](https://rspatial.org/terra/pkg/index.html) | [`tidyr`](https://tidyr.tidyverse.org/) | [`tmap`](https://r-tmap.github.io/tmap/)    | [`shiny`](https://shiny.rstudio.com/)         |
-|                                                                |                                                      |                                         |                                             |                                               |
-| [`rgbif`](https://docs.ropensci.org/rgbif/articles/rgbif.html) |                                                      | [`readr`](https://readr.tidyverse.org/) |                                             |                                               |
-+----------------------------------------------------------------+------------------------------------------------------+-----------------------------------------+---------------------------------------------+-----------------------------------------------+
++:--------------------------------------------------------------:+:---------------------------------------:+:-------------------------------------------:+:----------------------------------------------------:+:---------------------------------------------:+
+| **Data Retrieval**                                             | **Data Wrangling**                      | **Data Visualization**                      | **Processing Spatial Data**                          | **Sharing Data**                              |
++----------------------------------------------------------------+-----------------------------------------+---------------------------------------------+------------------------------------------------------+-----------------------------------------------+
+| [`tidycensus`](https://walker-data.com/tidycensus/)            | [`dplyr`](https://dplyr.tidyverse.org/) | [`ggplot2`](https://ggplot2.tidyverse.org/) | [`sf`](https://r-spatial.github.io/sf/)              | [`rmarkdown`](https://rmarkdown.rstudio.com/) |
+|                                                                |                                         |                                             |                                                      |                                               |
+| [`tigris`](https://github.com/walkerke/tigris)                 | [`tidyr`](https://tidyr.tidyverse.org/) | [`tmap`](https://r-tmap.github.io/tmap/)    | [`terra`](https://rspatial.org/terra/pkg/index.html) | [`shiny`](https://shiny.rstudio.com/)         |
+|                                                                |                                         |                                             |                                                      |                                               |
+| [`rgbif`](https://docs.ropensci.org/rgbif/articles/rgbif.html) | [`readr`](https://readr.tidyverse.org/) |                                             |                                                      |                                               |
++----------------------------------------------------------------+-----------------------------------------+---------------------------------------------+------------------------------------------------------+-----------------------------------------------+
 
-We will be working in RStudio this entire course, so after you have installed both R and R Studio, open a new session of R Studio. If you are new to working with R Studio visit the [R Basics](basics.qmd) page for an overview first.
+We will be working in RStudio this entire course, so after you have installed both R and RStudio, open a new session of RStudio. If you are new to working with RStudio visit the [R Basics](basics.qmd) page for an overview first.
 
 To make this a little more reproducible, we are going to use a function throughout the course that checks if you need to install these packages on your system or not, installs them if needed, and then loads all the libraries into your R session. You can copy the code below (make sure to copy the entire chunk) and run it in your console, or save it in a script. We will walk through saving it as a script in Lesson 1 to reuse it throughout the course.
 
@@ -54,7 +54,7 @@ packageLoad(c("tidycensus", "tigris", "rgbif", "sf", "terra",
               "rmarkdown", "shiny"))
 ```
 
-This may take a while to run, and you will see a lot of text being printed to your console. There may even be some warnings, but you can ignore most of this text unless you see 'error' anywhere. If you get errors and can't figure out how to troubleshoot, please send me an email (ccmothes\@colostate.edu) which a screen shot of the error and which package(s) you are having trouble installing.
+This may take a while to run, and you will see a lot of text being printed to your console. There may even be some warnings, but you can ignore most of this text unless you see 'error' anywhere. If you get errors and can't figure out how to troubleshoot, please send me an email (ccmothes\@colostate.edu) with a screenshot of the error and which package(s) you are having trouble installing. You can also join 30 mins before the first day of the workshop to troubleshoot in person.
 
 To make sure you have all the needed packages installed and loaded, you can run this line of code and make sure you see all the packages in the table above printed to your console:
 

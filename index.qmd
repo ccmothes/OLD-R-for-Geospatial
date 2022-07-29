@@ -6,7 +6,7 @@ subtitle: "Geospatial Centroid @ CSU"
 
 ## Welcome
 
-This is the **R for Geospatial** course website where you will find all necessary material. This course is designed for researchers with a basic understanding of R and RStudio and an interest in working with spatial data. **If you are new to R/RStudio, please review the [R Basics](basics.qmd) page before the workshop**. Even if you have R experience, it is recommended to still review the R Basics material to make sure everyone is on the same page by the start of the workshop.
+This is the **R for Geospatial** course website where you will find all necessary material. This course is designed for individuals with a basic understanding of R and RStudio and an interest in working with spatial data. **If you are new to R/RStudio, please review the [R Basics](basics.qmd) page before the workshop**. Even if you have R experience, it is recommended to still review the introductory material to make sure everyone is on the same page by the start of the workshop.
 
 In this workshop you will learn how to better handle, analyze, and visualize spatial data in R. You will also be exposed to various open-source spatial databases and learn how to access them directly from R to pull in data. The general breakdown of the workshop is as follows:**\
 Lesson 1:**
