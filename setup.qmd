@@ -1,5 +1,8 @@
 ---
 title: "Getting Started"
+format: 
+  html:
+    eval: false
 ---
 
 This is the set-up page for the **R for Geospatial** workshop. You ***must*** complete all steps on this page before the first day of the workshop. If you have any issues, we will have set-up hours 30 minutes before the start of Lesson 1, or you can email ccmothes\@colostate.edu beforehand.
