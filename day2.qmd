@@ -367,7 +367,7 @@ forest[forest != 1] <- NA
 Lets look at our new forest layer
 
 ```{r}
-qtm(forest)
+plot(forest)
 ```
 
 ## Focal Statistics
