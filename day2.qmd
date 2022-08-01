@@ -2,7 +2,9 @@
 title: "Lesson 2"
 format: 
   html:
-    eval: false
+    message: false
+    warning: false
+    df-print: paged
 ---
 
 # Spatial Data Analysis
@@ -365,7 +367,7 @@ forest[forest != 1] <- NA
 Lets look at our new forest layer
 
 ```{r}
-plot(forest)
+qtm(forest)
 ```
 
 ## Focal Statistics
@@ -471,7 +473,7 @@ terra::extract(landcover_prj, vect(counties), fun = "modal")
 This works similar to what we ran with the occurrence dataset...however we notice that it returns the raw raster values instead of the named land cover classes (which we want). This raster behaves such that values are named factors, and we can pull this metadata with the `cats()` function.
 
 ```{r}
-cats(landcover)
+cats(landcover)[[1]]
 ```
 
 This returns a single element list that is a data frame with a bunch of information. We just want to keep 'value' and 'NLCD Land Cover Class", and remove all the empty classes. We have to first index the first element of the list to operate on just the data frame, then we can apply some `dplyr` functions.
@@ -531,10 +533,12 @@ counties_attr <- counties_attr %>%
 Now we use the `save()` function, listing all the objects in our current environment that we want to save, and the file name and location with the .RData extension.
 
 ```{r}
+#| eval: false
 save(counties_attr, occ_buffer, occ_larimer, occ, file = "data/objects.RData")
 ```
 
 ```{r}
+#| eval: false
 #| echo: false
 # for testing/building content
 save(counties_attr, occ_buffer, occ_larimer, occ, file = "data_test/objects.RData")

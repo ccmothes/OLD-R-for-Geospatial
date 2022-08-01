@@ -50,10 +50,11 @@ Get elevation data using the [`elevatr`](https://github.com/jhollist/elevatr) pa
 # get elevation at ~1km (864m)
 elevation <- get_elev_raster(counties, z = 7)
 
+# save elevation to file as a GeoTIFF
 terra::writeRaster(elevation2, "data/elevation_1km.tif")
 ```
 
-For this workshop we are also going to work with a land cover raster dataset from the National Land Cover Database (NLCD). You can download NLCD data directly from R using the `FedData` package, however the most updated land cover data available is from 2011. For this course, NLCD 2019 CONUS data was downloaded to my local system from the [MRLC website](https://www.mrlc.gov/data/nlcd-2019-land-cover-conus). The following code is how I read in and cleaned the land cover data for use in this workshop. Processing includes cropping the CONUS dataset to the state of Colorado, and then aggregating (reducing the resolution) of the raster from 30m to \~1km (990m) to make processing and analysis quicker for the workshop.
+For this workshop we are also going to work with a land cover raster data set from the National Land Cover Database (NLCD). You can download NLCD data directly from R using the `FedData` package, however the most updated land cover data available is from 2011. For this course, NLCD 2019 CONUS data was downloaded to my local system from the [MRLC website](https://www.mrlc.gov/data/nlcd-2019-land-cover-conus). The following code is how I read in and cleaned the land cover data for use in this workshop. Processing includes cropping the CONUS data set to the state of Colorado, and then aggregating (reducing the resolution) of the raster from 30m to \~1km (990m) to make processing and analysis quicker for the workshop.
 
 ```{r}
 #| eval: false
@@ -61,8 +62,7 @@ For this workshop we are also going to work with a land cover raster dataset fro
 # Read in the raster (image) file
 land <- terra::rast('L:/Projects_active/EnviroScreen/data/NLCD/Land Cover/nlcd_2019_land_cover_l48_20210604.img') 
 
-#transform the counties spatial object to match landcover so we can perform crop
-#and mask operations
+#transform the counties spatial object to match landcover so we can perform crop and mask operations
 counties_aea <- st_transform(counties, crs(land))
 
 # crop the landcover to Colorado
@@ -99,9 +99,9 @@ common_name <- c("Elk", "Yellow-bellied Marmot", "Western Tiger Salamander")
 ```
 
 ```{r}
-#write a for loop to extract occurrence data for each species
+# write a for loop to extract occurrence data for each species
 
-## #create an empty vector to store each species' downloaded occurrence data
+# create an empty vector to store each species' downloaded occurrence data
 occ <- vector("list", length = length(species)) 
 
 
@@ -140,40 +140,72 @@ occ <- do.call("rbind", occ)
 ```
 
 ```{r}
-write.csv(occ, "data/species_occ.csv")
+write_csv(occ, "data/species_occ.csv")
 ```
 
 ## Line Data
 
-Use the `tigris` package to download linear water features (streams/rivers, braided streams, canals, ditches, artificial paths, and aqueducts) and roads.
+Use the `tigris` package to download linear water features (streams/rivers, braided streams, canals, ditches, artificial paths, and aqueducts) and roads for Larimer County.
 
 ```{r}
-rivers <- linear_water(state = "CO", "Larimer")
+rivers <- linear_water(state = "CO", county = "Larimer")
 
 roads <- roads(state = "CO", county = "Larimer")
+
+# save the files
+st_write(rivers, "data/rivers.shp")
+
+st_write(roads, "data/roads.shp")
 ```
 
 ## Polygon Data
 
-Urban areas and county level census vars
+We already imported a spatial polygon data set, `counties`. We are going to work with one more polygon data set from the `tigris` package which includes the boundaries of individual urban areas and clusters across Colorado. We have to do a little data cleaning to filter just urban areas within the state of Colorado.
 
 ```{r}
 urban <- urban_areas() %>% 
   tidyr::separate(col = NAME10, sep = ", ", into = c("city", "state")) %>% 
   dplyr::filter(state == "CO")
 
+#save the file
+st_write(urban, "data/urban_areas.shp")
+```
+
+Finally, we are going to work with some census variables, namely total population and median household income. You can import census data with the `tidycensus` package, which does require an API key. You can obtain a key for free [here](http://api.census.gov/data/key_signup.html). We import these variables using the `get_acs()` function ("acs" stands for American Community Survey), specifying the state of Colorado and to return data at the county level. We import just the county level data here as we will tie these attributes to our spatial data later, but you could also import these results as spatial objects by setting `geometry = TRUE`.
+
+```{r}
+# supply your unique API key
+census_api_key("PASTE YOUR API KEY HERE")
+
+#import total population and median household income
+census <- get_acs(geography = "county", state = "CO", year = 2019,
+                  variables = c("B01003_001", "B19013_001"), output = "wide")
+
+#clean the data
+census <- census %>% 
+  dplyr::select(contains("E")) %>% 
+  rename(total_pop = B01003_001E, med_income = B19013_001E)
+
+#save it
+write_csv(census, "data/census_data.csv")
 ```
 
 ## Other Data Libraries
 
 R's collection of data retrieval libraries is extensive. We only use a few of them in this workshop, but I wanted to mention a few other packages that may be of interest:
 
-|                                                                                                       |                                                                                                                                         |
-|-------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------|
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 | [`rnaturalearth`](https://docs.ropensci.org/rnaturalearth/articles/rnaturalearth.html)                | Natural Earth spatial data                                                                                                              |
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 | [`rnoaa`](https://docs.ropensci.org/rnoaa/articles/rnoaa.html)                                        | NOAA weather data                                                                                                                       |
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 | [`dataRetrieval`](https://cran.r-project.org/web/packages/dataRetrieval/vignettes/dataRetrieval.html) | USGS water data                                                                                                                         |
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 | [`wdpar`](https://cran.r-project.org/web/packages/wdpar/vignettes/wdpar.html)                         | World Database on Protected Areas                                                                                                       |
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 | [`rgee`](https://github.com/r-spatial/rgee)                                                           | use Google Earth Engine (and connect to the entire data collection) in R                                                                |
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 | [`nhdplusTools`](https://usgs-r.github.io/nhdplusTools/)                                              | Hydrographic data                                                                                                                       |
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
 | [`FedData`](https://github.com/ropensci/FedData)                                                      | Spatial data from several U.S. federal data sources, such as elevation, hydrography, soil, land cover, cropland, and climate data sets. |
++-------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+

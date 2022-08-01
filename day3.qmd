@@ -2,22 +2,23 @@
 title: "Lesson 3"
 format: 
   html:
-    eval: false
+    message: false
+    warning: false
 ---
 
 # Spatial Data Visualization and Sharing
 
-We did some basic plotting yesterday to view the results of our spatial analyses. Today we will be working with some more advanced mapping techniques, plotting multiple spatial layers together, and learn how to make these interactive and ways to share data and visualizations with others.
+We did some basic plotting in [Lesson 2](day2.qmd) to view the results of our spatial analyses. In this lesson we will be working with some more advanced mapping techniques, plotting multiple spatial layers together, and learn how to make these interactive along with ways to share data and visualizations with others.
 
 First we need to call in the packages needed for today's lesson. Load in our `packageLoad()` function that we have now saved as a script with `source()` and read in the following packages:
 
 ```{r}
 source("packageLoad.R")
 
-packageLoad(c("tmap", "ggplot2", "shiny", "rmarkdown", "dplyr"))
+packageLoad(c("tmap", "ggplot2", "shiny", "rmarkdown", "dplyr", "terra"))
 ```
 
-Next we need to read in data from yesterday. Since we saved these as R objects in an `.RData` format, we can load those objects back into the session with `load()`.
+Next we need to read in data from Lesson 2. Since we saved these as R objects in an `.RData` format, we can load those objects back into the session with `load()`.
 
 *Note:* If we saved a `.RData` file in the main project directory, these objects would load in the environment every time you open a new session. This is related to the question you may get every time you close out of R Studio that says "Do you want to save your workspace". It is best practice to always say no (you can set this in your global options), otherwise you will be saving your entire R environment every time which likely consists of too much extra data you don't need. Here we are saving the objects we know we will use again and that had required quite a bit of code to create them.
 
@@ -33,13 +34,13 @@ load("data_test/objects.RData")
 
 ## Mapping with `ggplot2`
 
-Let's start visually exploring our counties data. R has a base `plot()` function which we used briefly yesterday. Since `counties_attr` is a spatial data frame, we have to specify the "geometry" column to plot to make it spatial.
+Let's start visually exploring our counties data. R has a base `plot()` function which we used briefly in previous lessons. Since `counties_attr` is a spatial data frame, we have to specify the "geometry" column to `plot()` to make it spatial.
 
 ```{r}
 plot(counties_attr$geometry)
 ```
 
-We used `gpglot2` a little bit yesterday to make some bar and line charts, but this package also has the capability of mapping spatial data, specifically `sf` objects, with the `geom_sf()` function:
+We used `gpglot2` in Lesson 2 to make some bar and line charts, but this package also has the capability of mapping spatial data, specifically `sf` objects, with the `geom_sf()` function:
 
 ```{r}
 ggplot(data = counties_attr) +
@@ -57,7 +58,7 @@ ggplot(data = counties_attr, aes(fill = total_pop)) +
 
 #### Customizing `ggplot2` maps
 
-We worked through a little bit of customization with `ggplot2` yesterday. Here are some ways to make a more publication ready map:
+Here are some ways to make a more publication ready map:
 
 ```{r}
 ggplot(data = counties_attr, aes(fill = total_pop)) +
@@ -69,9 +70,10 @@ ggplot(data = counties_attr, aes(fill = total_pop)) +
   theme_void()
 ```
 
-You can save maps/plots either directly from the viewer pane or with the `ggsave()` function, which allows for a little more customization in your figure output.
+You can save `ggplot2` maps/plots either directly from the "Plots" viewing pane or with the `ggsave()` function, which allows for a little more customization in your figure output.
 
 ```{r}
+#| eval: false
 ?ggsave
 ```
 
@@ -133,7 +135,7 @@ tm_shape(counties_attr) +
             legend.hist.width = 5)
 ```
 
-`tmap` also has functions to add more customizations like a compass, scale bar and map credits.
+`tmap` also has functions to add more customization like a compass, scale bar and map credits.
 
 ```{r}
 tm_shape(counties_attr) +
@@ -153,6 +155,7 @@ tm_shape(counties_attr) +
 You can save your maps with the `tmap_save()` function
 
 ```{r}
+#| eval: false
 ?tmap_save
 ```
 
@@ -208,8 +211,11 @@ tm_shape(occ) +
 Can't decide on a color palette? `tmap` has a built in tool that allows you decide.
 
 ```{r}
+#| eval: false
 tmaptools::palette_explorer()
 ```
+
+![](images/paste-588A4C3F.png){width="469"}
 
 Want a cool `tmap` tip?
 
@@ -252,12 +258,23 @@ tmap_mode("view")
 ```
 
 ```{r}
+#| eval: false
+#| echo: false
 tm_shape(counties_attr) +
   tm_polygons() +
 tm_shape(occ) +
   tm_facets(by = "Species", sync = TRUE) +
   tm_dots(col = "Species", palette = c("red", "yellow", "blue"),
              alpha = 0.5, size = 0.1, legend.show = FALSE)
+```
+
+```{r}
+tm_shape(counties_attr) +
+  tm_polygons(c("total_pop", "med_income"),
+              style = "quantile", n = 5,
+              title = c("Total Population", "Median Income"))+
+  tm_facets(ncol = 2, sync = TRUE) +
+  tm_layout(frame = FALSE)
 ```
 
 ## Animation
@@ -290,8 +307,11 @@ m1 <- tm_shape(counties_attr) +
 ```
 
 ```{r}
-tmap_animation(m1, width = 1200, height = 600, delay = 80)
+#| eval: false
+tmap_animation(m1, filename = "data/elk_occ.gif", width = 1200, height = 600, delay = 80)
 ```
+
+![](data/elk_occ.gif)
 
 ## Interactive Mapping
 
@@ -367,7 +387,7 @@ You can then share these documents with your intended audience, or host them on 
 
 [Shiny](https://shiny.rstudio.com/) is an R package that takes interactivity to another level through interactive web applications, allowing users to interact with any aspect of your data and analysis. You can host them as standalone web apps or embed them within R Markdown documents or build dashboards. And the best part is...you can do it all within R, no web development skills required!
 
-So, lets build a quick shiny app! Rolling with the multilayer interactive map we just made above, let's make an app that allows users to interact with the data. For example, we have a lot of species occurrence data. Based on various attributes, we could allow users to choose what they want to see on the map, such as which species, what year they were observed, and what elevation they were found at.
+So, lets build a quick shiny app! Rolling with the multi-layer interactive map we just made above, let's make an app that allows users to interact with the data. For example, we have a lot of species occurrence data. Based on various attributes, we could allow users to choose what they want to see on the map, such as which species, what year they were observed, and what elevation they were found at.
 
 Shiny apps are contained in a single script called `app.R` . `app.R` has three components:
 
@@ -381,9 +401,10 @@ Let's create a new shiny app by going to File -\> New File -\> Shiny Web App
 
 This creates an outline of our shiny app, with the `ui` and `server` objects and a call to `shinyApp()` at the end. Since shiny apps are self contained within the `app.R` file, at the top of the file define which libraries you need and read in your data. `app.R` files assume the working directory is the directory the `app.R` file lives in, so for this example save it to the root project directory.
 
-First let's define the UI. Our layout is going to be a fluid page with a title panel, followed by a sidebar layout with a main panel (our map) and a side panel (user inputs).
+First let's define the UI. Our layout is going to be a fluid page with a title panel, followed by a sidebar layout with a main panel (our map) and a side panel (user inputs). You can learn more about the different layout types [here](https://shiny.rstudio.com/articles/layout-guide.html).
 
 ```{r}
+#| eval: false
 ui <- fluidPage(
   
   #App title
@@ -438,6 +459,7 @@ ui <- fluidPage(
 Now define the server logic that draws the map based on user inputs
 
 ```{r}
+#| eval: false
 
 server <- function(input, output){
   
@@ -481,9 +503,10 @@ server <- function(input, output){
 }
 ```
 
-Run the app
+Run the app:
 
 ```{r}
+#| eval: false
 shinyApp(ui = ui, server = server)
 ```
 

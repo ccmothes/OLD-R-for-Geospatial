@@ -48,16 +48,16 @@ packageLoad(c("rgbif", "tidycensus", "tigris", "sf", "terra", "dplyr", "tidyr", 
 ```
 
 ```{r}
-#| eval: true
+#| eval: false
 #| echo: false
 #| warning: false
 library(downloadthis)
 ```
 
-Today we are going to walk through how to import spatial data directly into R, clean it, and save it so we can work with it the rest of the workshop. However, there are some data sets we will be using that are not covered in today's lesson so you will need to download the data to use for Lessons 2 and 3. Click the download button below, and this will download a zipped folder called 'course-data'. Next, extract all files from the folder, navigating to your project directory. This will then place a folder called 'data' within your project directory with all the data files you need for this workshop.
+Today we are going to walk through how to import spatial data directly into R, clean it, and save it so we can work with it the rest of the workshop.
 
 ```{r}
-#| eval: true
+#| eval: false
 #| echo: false
 #| message: false
 
@@ -70,11 +70,6 @@ download_dir(
   self_contained = FALSE
 )
 ```
-
-::: {.callout-note appearance="minimal"}
-<i class="bi bi-download"></i> [Download Elevation Data](data/elevation_1km.tif){download="elevation_1km.tif"}
-:::
-
 
 We will work through how most of these data sets were imported and cleaned today, but not all of them are covered. To see how all data sets were created you can check out the [Pulling Data](getdata.qmd) page.
 
@@ -101,6 +96,8 @@ We will work through how most of these data sets were imported and cleaned today
 ## Import and manipulate spatial data
 
 Now we have our project set up, packages loaded, and a basic understanding of the spatial data types we will be using. Let's get some data to work with! For the first part we are going to import spatial data into R using the `tigris`, `tidycensus`, and `rgbif` packages. The raster data has been pre-processed (see [Pulling Data](getdata.qmd) for how that was done in R) and we will read those files in from file.
+
+First, lets create a new directory in our project called 'data/' where we will be saving all the data used for this workshop.
 
 ### Vector Data
 
@@ -252,14 +249,30 @@ occ <- bind_rows(occ)
 
 ### Raster Data
 
-As mentioned before, we have already processed the raster files and they now exist in the downloaded 'data/' folder as GeoTIFFs. We can read in raster files using the `rast()` function from the `terra` package.
+The raster files for this workshop have already been processed (see [Pulling Data](getdata.qmd) for how this was done). Click each button below to download the GeoTIFF files for elevation and land cover (plus the necessary land cover attribute file) and save them in your 'data/' folder within this project.
+
+::: {.callout-note appearance="minimal"}
+<i class="bi bi-download"></i> [Download Elevation Data](data_test/elevation_1km.tif){download="elevation_1km.tif"}
+:::
+
+::: {.callout-note appearance="minimal"}
+<i class="bi bi-download"></i> [Download Land Cover Data](data_test/NLCD_CO.tif){download="NLCD_CO.tif"}
+:::
+
+::: {.callout-note appearance="minimal"}
+<i class="bi bi-download"></i> [Download Land Cover Attribute Data](data_test/NLCD_CO.tif.aux.xml){download="NLCD_CO.tif.aux.xml"}
+:::
+
+Once saved, we can read in raster files using the `rast()` function from the `terra` package.
 
 ```{r}
+#| eval: true
 elevation <- terra::rast("data/elevation_1km.tif")
 ```
 
 ```{r}
-plot(elevation)
+#| eval: true
+terra::plot(elevation)
 ```
 
 ## Coordinate Reference Systems
@@ -269,6 +282,7 @@ Probably the most important part of working with spatial data is the coordinate 
 We can check a spatial object's CRS by printing it to the console, which will print a bunch of metadata about the object.
 
 ```{r}
+#| eval: true
 elevation
 ```
 
@@ -286,7 +300,6 @@ st_write(rivers, "data/rivers.shp", append = FALSE) #if the file already exists
 st_write(roads, "data/roads.shp")
 
 st_write(urban, "data/urban_areas.shp")
-
 
 ```
 
