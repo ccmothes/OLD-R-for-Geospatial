@@ -1,0 +1,1 @@
+Sitemap: https://github.com/ccmothes/R-for-Geospatial/sitemap.xml

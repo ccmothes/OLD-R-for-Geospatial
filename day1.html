@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Lesson 1</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Lesson 1</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">R for Geospatial</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://twitter.com/Centroid_CSU" title="" class="sidebar-tool px-1"><i class="bi bi-twitter"></i></a>
+    <a href="https://github.com/ccmothes/R-for-Geospatial" title="" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Welcome</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./setup.html" class="sidebar-item-text sidebar-link">Getting Started</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./day1.html" class="sidebar-item-text sidebar-link active">Lesson 1</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./day2.html" class="sidebar-item-text sidebar-link">Lesson 2</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./day3.html" class="sidebar-item-text sidebar-link">Lesson 3</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">Extras</a>
+          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./getdata.html" class="sidebar-item-text sidebar-link">Pulling Data</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./basics.html" class="sidebar-item-text sidebar-link">R Basics</a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#set-up-an-r-project" id="toc-set-up-an-r-project" class="nav-link active" data-scroll-target="#set-up-an-r-project">Set up an R Project</a></li>
+  <li><a href="#read-in-r-packages" id="toc-read-in-r-packages" class="nav-link" data-scroll-target="#read-in-r-packages">Read in R packages</a></li>
+  <li><a href="#spatial-data-formats" id="toc-spatial-data-formats" class="nav-link" data-scroll-target="#spatial-data-formats">Spatial Data Formats</a></li>
+  <li><a href="#import-and-manipulate-spatial-data" id="toc-import-and-manipulate-spatial-data" class="nav-link" data-scroll-target="#import-and-manipulate-spatial-data">Import and manipulate spatial data</a>
+  <ul class="collapse">
+  <li><a href="#vector-data" id="toc-vector-data" class="nav-link" data-scroll-target="#vector-data">Vector Data</a></li>
+  <li><a href="#raster-data" id="toc-raster-data" class="nav-link" data-scroll-target="#raster-data">Raster Data</a></li>
+  </ul></li>
+  <li><a href="#coordinate-reference-systems" id="toc-coordinate-reference-systems" class="nav-link" data-scroll-target="#coordinate-reference-systems">Coordinate Reference Systems</a></li>
+  <li><a href="#saving-spatial-data" id="toc-saving-spatial-data" class="nav-link" data-scroll-target="#saving-spatial-data">Saving spatial data</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Lesson 1</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="set-up-an-r-project" class="level2">
+<h2 class="anchored" data-anchor-id="set-up-an-r-project">Set up an R Project</h2>
+<p>As a first step whenever you start a new project, workflow, analysis, etc., it is good practice to set up an R project. R Projects are RStudio’s way of bundling together all your files for a specific project, such as data, scripts, results, figures. Your project directory also becomes your working directory, so everything is self-contained and easily portable.</p>
+<p>You can start an R project in an existing directory or in a new one. To create a project go to File -&gt; New Project:</p>
+<p><img src="images/paste-050BDFEC.png" class="img-fluid"></p>
+<p>Let’s create a new directory and call it ‘R-for-Geospatial’. You can make it a sub directory of any folder you wish.</p>
+<p><img src="images/paste-6F92D857.png" class="img-fluid"></p>
+<p>Now we are working in our R project. You can see the working directory printed at the top of your console is now our project directory, and in the ‘Files’ tab in RStudio you can see we have an .Rproj file, which will open up this R project in RStudio whenever you come back to it. For example close out of this R session, navigate to the project folder on your computer, and double-click the .Rproj file.</p>
+</section>
+<section id="read-in-r-packages" class="level2">
+<h2 class="anchored" data-anchor-id="read-in-r-packages">Read in R packages</h2>
+<p>Now we have started a fresh R session in our new R project, we need to read in the libraries needed to work through today’s lesson. You should have all packages installed after finishing the set-up instructions on the <a href="./setup.html">Getting Started</a> page.</p>
+<p>In the set-up lesson, you used the following function to check if a package is installed, if not install it, and then load that package into your session.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>packageLoad <span class="ot">&lt;-</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">function</span>(x) {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(x)) {</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="sc">!</span>x[i] <span class="sc">%in%</span> <span class="fu">installed.packages</span>()) {</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">install.packages</span>(x[i])</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="fu">library</span>(x[i], <span class="at">character.only =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will be using this function the rest of the workshop to read in a list of packages at the beginning of each lesson, so lets store it as its own R script that we can call in later with the <code>source()</code> function. Sourcing functions is good practice as it reduces repetitiveness of rewriting them every time you want to use it.</p>
+<p>Now let’s use it to load in our libraries needed for today. Assuming you already installed all of these, loading them should run pretty quick.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">packageLoad</span>(<span class="fu">c</span>(<span class="st">"rgbif"</span>, <span class="st">"tidycensus"</span>, <span class="st">"tigris"</span>, <span class="st">"sf"</span>, <span class="st">"terra"</span>, <span class="st">"dplyr"</span>, <span class="st">"tidyr"</span>, <span class="st">"readr"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+
+</div>
+<p>Today we are going to walk through how to import spatial data directly into R, clean it, and save it so we can work with it the rest of the workshop.</p>
+<div class="cell">
+
+</div>
+<p>We will work through how most of these data sets were imported and cleaned today, but not all of them are covered. To see how all data sets were created you can check out the <a href="./getdata.html">Pulling Data</a> page.</p>
+</section>
+<section id="spatial-data-formats" class="level2">
+<h2 class="anchored" data-anchor-id="spatial-data-formats">Spatial Data Formats</h2>
+<p><strong>Vector Data</strong></p>
+<ul>
+<li><p>Locations (points)</p>
+<ul>
+<li>Coordinates, address, country, city</li>
+</ul></li>
+<li><p>Shapes (lines or polygons)</p>
+<ul>
+<li>Political boundaries, roads, building footprints, water bodies</li>
+</ul></li>
+</ul>
+<p><strong>Raster Data</strong></p>
+<ul>
+<li><p>Images (matrix of cells organized by rows and columns)</p>
+<ul>
+<li><p>Satellite imagery, climate, landcover, elevation</p>
+<p><img src="images/paste-571C0D9A.png" class="img-fluid" width="430"></p></li>
+</ul></li>
+</ul>
+</section>
+<section id="import-and-manipulate-spatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="import-and-manipulate-spatial-data">Import and manipulate spatial data</h2>
+<p>Now we have our project set up, packages loaded, and a basic understanding of the spatial data types we will be using. Let’s get some data to work with! For the first part we are going to import spatial data into R using the <code>tigris</code>, <code>tidycensus</code>, and <code>rgbif</code> packages. The raster data has been pre-processed (see <a href="./getdata.html">Pulling Data</a> for how that was done in R) and we will read those files in from file.</p>
+<p>First, lets create a new directory in our project called ‘data/’ where we will be saving all the data used for this workshop.</p>
+<section id="vector-data" class="level3">
+<h3 class="anchored" data-anchor-id="vector-data">Vector Data</h3>
+<section id="tigris" class="level4">
+<h4 class="anchored" data-anchor-id="tigris"><code>tigris</code></h4>
+<p>All the data we are working with in this course is confined to the state of Colorado. Let’s start by pulling in political boundaries for Colorado counties with the <a href="https://github.com/walkerke/tigris"><code>tigris</code></a> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># download county shapefile for the state of Colorado</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>counties <span class="ot">&lt;-</span> tigris<span class="sc">::</span><span class="fu">counties</span>(<span class="at">state =</span> <span class="st">"CO"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><code>tigris</code> has a lot of other available data sets in addition to political boundaries. In this course we are going to work with additional line shape files (rivers and roads) and polygons (urban areas).</p>
+<p>Due to the density of rivers and roads in Colorado and therefore large file size, we are going to limit this download to just Larimer County.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rivers <span class="ot">&lt;-</span> <span class="fu">linear_water</span>(<span class="at">state =</span> <span class="st">"CO"</span>, <span class="st">"Larimer"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>roads <span class="ot">&lt;-</span> <span class="fu">roads</span>(<span class="at">state =</span> <span class="st">"CO"</span>, <span class="at">county =</span> <span class="st">"Larimer"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Our object <code>rivers</code> actually includes all linear water features in the county, such as streams/rivers, braided streams, canals, ditches, artificial paths, and aqueducts.</p>
+<p><code>counties</code> is a spatial polygon data set. We are going to work with one more polygon data set which includes the boundaries of individual urban areas and clusters across Colorado. We can explore the <code>urban_areas()</code> function from the <code>tigris</code> package to get more details on how urban areas are defined.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>?urban_areas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now let’s download the data set. By default it imports urban areas for all of the U.S., but we just want areas within Colorado. We have to do some data wrangling to filter out just Colorado urban areas. The column “NAME10” has the city and state of each urban area. We can use the <code>separate()</code> function from the <code>tidyr</code> package to split the “NAME10” column into two separate columns for city and state, and then we can use the <code>filter()</code> function to subset just the urban areas in Colorado.</p>
+<p>We are also using a new function here, the pipe <code>%&gt;%</code> operator. This allows us to run a sequence of operations without having to create intermediate objects that take up unnecessary space in your environment. It can be interpreted as ‘and then’, taking the output of one function ‘and then’ running the next function using that output as the input. We will be using the pipe a lot throughout this workshop.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>urban <span class="ot">&lt;-</span> <span class="fu">urban_areas</span>() <span class="sc">%&gt;%</span> </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  tidyr<span class="sc">::</span><span class="fu">separate</span>(<span class="at">col =</span> NAME10, <span class="at">sep =</span> <span class="st">", "</span>, <span class="at">into =</span> <span class="fu">c</span>(<span class="st">"city"</span>, <span class="st">"state"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">filter</span>(state <span class="sc">==</span> <span class="st">"CO"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="tidycensus" class="level4">
+<h4 class="anchored" data-anchor-id="tidycensus"><code>tidycensus</code></h4>
+<p><a href="https://walker-data.com/tidycensus/"><code>tidycensus</code></a> is an R package that allows users to access U.S. Census data, imported as “tidy” data designed to work with tidyverse packages. The tidyverse is a collection of R packages designed for data manipulation, exploration, and visualization that you are likely to use in every day data analysis. They all use the same design philosophy, grammar, and data structures. When you install the tidyverse, it installs all of these packages, and you can then load all of them in your R session with <code>library(tidyverse)</code>. You can learn more about the tidyverse and the packages it includes here: <a href="https://www.tidyverse.org/" class="uri">https://www.tidyverse.org/</a>.</p>
+<p>The <code>tidycensus</code> package requires the use of an API key to download data. You can obtain an API key for free at <a href="http://api.census.gov/data/key_signup.html" class="uri">http://api.census.gov/data/key_signup.html</a></p>
+<p>Once you have the API key, you need to run the following line of code before downloading any census data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">census_api_key</span>(<span class="st">"PASTE YOUR API KEY HERE"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+
+</div>
+<p>Now let’s first investigate what census variables are available (there’s a lot). <code>tidycesus</code> has two major functions: <code>get_decennial()</code> to access the 2000, 2010, and 2020 decennial U.S. Census data, and <code>get_acs()</code> to access the 1-year and 5-year American Community Survey (ACS) data. For this workshop we are going to work with ACS data.</p>
+<p>We can get the full list of available variables with the <code>load_variables()</code> function, and we are interested in the 5-year ACS data for 2019 (the most recent year available). We then pass this output to <code>View()</code> which will open the data frame in a separate tab to be viewed similar to an excel spreadsheet.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load_variables</span>(<span class="dv">2019</span>, <span class="st">"acs5"</span>) <span class="sc">%&gt;%</span> <span class="fu">View</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We are going to download total population and median household income. We use the <code>get_acs()</code> function and specify we want this data at the county level for the state of Colorado and supply a string of the variables we want, using the variable ID.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>census <span class="ot">&lt;-</span> <span class="fu">get_acs</span>(<span class="at">geography =</span> <span class="st">"county"</span>, <span class="at">state =</span> <span class="st">"CO"</span>, <span class="at">year =</span> <span class="dv">2019</span>,</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                  <span class="at">variables =</span> <span class="fu">c</span>(<span class="st">"B01003_001"</span>, <span class="st">"B19013_001"</span>), <span class="at">output =</span> <span class="st">"wide"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Let’s clean this up a bit. E stands for estimate and M is margin of error. For our purposes we are only looking at the estimate values, so lets remove the other columns and rename the ones we keep with more informative titles.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>census <span class="ot">&lt;-</span> census <span class="sc">%&gt;%</span> </span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">contains</span>(<span class="st">"E"</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">total_pop =</span> B01003_001E, <span class="at">med_income =</span> B19013_001E)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="rgbif" class="level4">
+<h4 class="anchored" data-anchor-id="rgbif"><code>rgbif</code></h4>
+<p>The last of our spatial data download is species occurrences in the form of point data (latitude/longitude). <code>rgbif</code> is a package that allows you to download species occurrences from the <a href="https://www.gbif.org/">Global Biodiversity Information Facility (GBIF)</a>, a database of global species occurrences with over 2.2 billion records.</p>
+<p>We are going to pull occurrence data for a couple of charismatic Colorado species:</p>
+<table class="table">
+<colgroup>
+<col style="width: 27%">
+<col style="width: 33%">
+<col style="width: 38%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><img src="elk.jpg" class="img-fluid" width="173" alt="Elk"></td>
+<td style="text-align: center;"><img src="marmot.jpg" class="img-fluid" width="173" alt="Marmot"></td>
+<td style="text-align: center;"><img src="salamander.jpg" class="img-fluid" width="215" alt="Salamander"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Elk</td>
+<td style="text-align: center;">Yellow-Bellied Marmot</td>
+<td style="text-align: center;">Western Tiger Salamander</td>
+</tr>
+</tbody>
+</table>
+<p>To pull data for multiple species we are going to run the <code>occ_data()</code> function from the <code>rgbif</code> package over multiple species using a for loop. For a refresher on for loops see the R Basics page.</p>
+<p>We first need to create a string of species scientific names to use in the download function, and a second string with their associated common names.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#make a string of species names to use in the 'occ_data' function</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Cervus canadensis"</span>, <span class="st">"Marmota flaviventris"</span>, <span class="st">"Ambystoma mavortium"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#also make a string of common names</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>common_name <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Elk"</span>, <span class="st">"Yellow-bellied Marmot"</span>, <span class="st">"Western Tiger Salamander"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now we are going to write a for loop that iterates across our three species. We first create an empty list that is the length of our species vector that we will fill with each species data download output and bind all the data together outside of the loop.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>occ <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, <span class="at">length =</span> <span class="fu">length</span>(species)) </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(occ)){</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  occ[[i]] <span class="ot">&lt;-</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">occ_data</span>(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">scientificName =</span> species[i],</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">hasCoordinate =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">geometry =</span> <span class="fu">st_bbox</span>(counties),</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">limit =</span> <span class="dv">2000</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    .<span class="sc">$</span>data <span class="co">#return just the data frame. The '.' symbolizes the previous function's output</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add species name column as ID to use later</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  occ[[i]]<span class="sc">$</span>ID <span class="ot">&lt;-</span> common_name[i]</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#clean by removing duplicate occurrences</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>  occ[[i]] <span class="ot">&lt;-</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    occ[[i]] <span class="sc">%&gt;%</span> <span class="fu">distinct</span>(decimalLatitude, decimalLongitude, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="at">Species =</span> ID,</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>           decimalLatitude,</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>           decimalLongitude,</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>           year,</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>           month,</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>           basisOfRecord) <span class="co">#only keep relevant variables</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(i) <span class="co"># this prints each element once its finished so you can see the progress</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Bind all data frames together</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>occ <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(occ)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="raster-data" class="level3">
+<h3 class="anchored" data-anchor-id="raster-data">Raster Data</h3>
+<p>The raster files for this workshop have already been processed (see <a href="./getdata.html">Pulling Data</a> for how this was done). Click each button below to download the GeoTIFF files for elevation and land cover (plus the necessary land cover attribute file) and save them in your ‘data/’ folder within this project.</p>
+<div class="callout-note callout callout-style-simple no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><i class="bi bi-download"></i> <a href="data_test/elevation_1km.tif" download="elevation_1km.tif">Download Elevation Data</a></p>
+</div>
+</div>
+</div>
+<div class="callout-note callout callout-style-simple no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><i class="bi bi-download"></i> <a href="data_test/NLCD_CO.tif" download="NLCD_CO.tif">Download Land Cover Data</a></p>
+</div>
+</div>
+</div>
+<div class="callout-note callout callout-style-simple no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><i class="bi bi-download"></i> <a href="data_test/NLCD_CO.tif.aux.xml" download="NLCD_CO.tif.aux.xml">Download Land Cover Attribute Data</a></p>
+</div>
+</div>
+</div>
+<p>Once saved, we can read in raster files using the <code>rast()</code> function from the <code>terra</code> package.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>elevation <span class="ot">&lt;-</span> terra<span class="sc">::</span><span class="fu">rast</span>(<span class="st">"data/elevation_1km.tif"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>terra<span class="sc">::</span><span class="fu">plot</span>(elevation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="day1_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="coordinate-reference-systems" class="level2">
+<h2 class="anchored" data-anchor-id="coordinate-reference-systems">Coordinate Reference Systems</h2>
+<p>Probably the most important part of working with spatial data is the coordinate reference system (CRS) that is used. In order to analyze and visualize spatial data, all objects must be in the exact same CRS.</p>
+<p>We can check a spatial object’s CRS by printing it to the console, which will print a bunch of metadata about the object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>elevation</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>class       : SpatRaster 
+dimensions  : 1322, 1724, 1  (nrow, ncol, nlyr)
+resolution  : 0.004895063, 0.004895063  (x, y)
+extent      : -109.6875, -101.2484, 36.59761, 43.06889  (xmin, xmax, ymin, ymax)
+coord. ref. : lon/lat NAD83 (EPSG:4269) 
+source      : elevation_1km.tif 
+name        : elevation_1km 
+min value   :           726 
+max value   :          4288 </code></pre>
+</div>
+</div>
+<p>Before we start performing spatial analyses tomorrow we will need to return to the CRS of these spatial objects and make sure they all match. If you need to transform a spatial object to a different CRS you can use the <code>st_transform()</code> function from the <code>sf</code> package for vector data, and <code>project()</code> from the <code>terra</code> package for raster data.</p>
+</section>
+<section id="saving-spatial-data" class="level2">
+<h2 class="anchored" data-anchor-id="saving-spatial-data">Saving spatial data</h2>
+<p>You do not necessarily need to run this part, since the ‘data/’ folder we downloaded at the beginning of today’s lesson contains all these data files we will need for tomorrow. However learning how to write spatial data to file is an important skill.</p>
+<p>To save shapefiles, you can use the <code>st_write()</code> function from the <code>sf</code> package. When running the code below you will likely get an error that the file already exists. If you want to overwrite a file with this function you add <code>append = FALSE</code> to the argument.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">st_write</span>(rivers, <span class="st">"data/rivers.shp"</span>, <span class="at">append =</span> <span class="cn">FALSE</span>) <span class="co">#if the file already exists</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">st_write</span>(roads, <span class="st">"data/roads.shp"</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">st_write</span>(urban, <span class="st">"data/urban_areas.shp"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can save point files as a csv with the <code>write_csv()</code> function. We will go over tomorrow how to read a csv file with coordinates and convert it into a spatial object.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(census, <span class="st">"data/census_data.csv"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(occ, <span class="st">"data/species_occ.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      <ul class="footer-items list-unstyled">
+    <li class="nav-item">
+ Copyright 2022, Caitlin Mothes
+  </li>  
+</ul>
+    </div>   
+    <div class="nav-footer-right"><a href="https://gis.colostate.edu/"><img src="logo.png" class="img-fluid" alt="Geospatial Centroid" width="150"></a></div>
+  </div>
+</footer>
+
+
+
+</body></html>
